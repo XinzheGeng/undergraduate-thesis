@@ -9,3 +9,7 @@ An Evaluation of Naive Bayesian Anti-Spam Filtering翻译.docx
 *.zip
 demo.*
 *.fls
+nb_spam/__pycache__
+nb_spam/trec06c
+nb_spam/venv
+nb_spam/.idea
