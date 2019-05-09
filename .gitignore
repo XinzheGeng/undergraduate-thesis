@@ -13,3 +13,5 @@ nb_spam/__pycache__
 nb_spam/trec06c
 nb_spam/venv
 nb_spam/.idea
+nb_spam/data
+nb_spam/dataset.pickle
