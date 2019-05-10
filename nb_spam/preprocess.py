@@ -40,7 +40,13 @@ class Worker(threading.Thread):
                 if os.path.exists(output_file_path):
                     continue
                 mail_content = get_mail_content(path)
+                # 跳过内容为空的邮件
+                if len(mail_content) == 0:
+                    continue
                 word_list = create_string_word_list(mail_content, self.stop_words)
+                # 跳过去掉禁用词后内容为空的邮件
+                if len(word_list) == 0:
+                    continue
                 output_text = ','.join(word_list)
                 with open(output_file_path, 'w', encoding='utf-8') as f:
                     f.write(output_text)
@@ -80,12 +86,12 @@ def load_stop_list(file_glob):
     """
     加载停用词列表
     """
-    stop_words = []
+    stop_words = set()
     for path in glob.glob(file_glob):
         with open(path, 'r') as f:
             lines = f.readlines()
-        stop_words = stop_words + [i.strip() for i in lines]
-    return set(stop_words)
+        stop_words |= set([i.strip() for i in lines])
+    return stop_words
 
 
 def create_string_word_list(string, stop_words, seg=segmentation):
@@ -104,7 +110,7 @@ def create_string_word_list(string, stop_words, seg=segmentation):
     # pkuseg 分词
     seg_list = seg.cut(string)
     for word in seg_list:
-        if word != '' and word not in stop_words:
+        if word != '' and len(word) != 0 and word not in stop_words:
             word_list.append(word)
     return word_list
 
@@ -126,12 +132,13 @@ def make_data_dir(target_dir):
 
 @click.command()
 @click.option('-t', 'trec06c_path', default='./trec06c', help='trec06 数据集根路径，default ./trec06c')
-@click.option('-s', 'stopwords_glob', default='./stopwords/\\*.txt', help='禁用词表 GLOB，default ./stopwords/\\*.txt')
+@click.option('-s', 'stopwords_glob', default='./stopwords/*.txt', help='禁用词表 GLOB，default ./stopwords/*.txt')
 @click.option('-T', 'target_dir', default='./data', help='输出文件目标目录，default ./data')
 @click.option('-n', 'worker_num', default=4, help='消费者进程数，default 4')
 def run(trec06c_path, stopwords_glob, target_dir, worker_num):
     queue = Queue(worker_num * 4)
     stop_words = load_stop_list(stopwords_glob)
+    print('禁用词表加载成功，长度', len(stop_words))
     index = get_index(trec06c_path)
     spam_dir, ham_dir = make_data_dir(target_dir)
 

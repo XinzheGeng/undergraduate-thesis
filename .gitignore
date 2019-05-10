@@ -15,3 +15,5 @@ nb_spam/venv
 nb_spam/.idea
 nb_spam/data
 nb_spam/dataset.pickle
+nb_spam/model.pickle
+nb_spam/static/images/*wordcloud*.png

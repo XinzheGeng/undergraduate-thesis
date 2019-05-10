@@ -5,7 +5,18 @@ import click
 import gc
 from scipy.sparse import lil_matrix, coo_matrix
 from tqdm import tqdm
+from datetime import datetime
 import pickle
+
+
+class Model:
+    def __init__(self, word_set, Pspam, Pham, PS, PH, created_at):
+        self.word_set = word_set
+        self.Pspam = Pspam
+        self.Pham = Pham
+        self.PS = PS
+        self.PH = PH
+        self.created_at: datetime = created_at
 
 
 def load_dataset(data_dir, ratio=1.0, dataset_pickle_filepath=''):
@@ -195,8 +206,10 @@ def split_vectors_by_ratio(vectors, labels, ratio=0.67):
 @click.option('-t', 'train_ratio', default=0.67, help='训练集集比例，default 0.67')
 @click.option('-d', 'dataset_pickle_filepath', default='',
               help='dataset pickle 文件路径，程序在读取数据集时会自动生成/读取 pickle 文件以加快读取速度，default \'\'')
+@click.option('-o', 'output_pickle_filepath', default='model.pickle',
+              help='输出 pickle 路径，{word_set, Pspam, Pham, PS, PH}, default \'model.pickle\'')
 # @click.option('-f', 'float_precision', default=16, help='浮点数精度，available16 32 64，default 16')
-def main(dataset_ratio, train_ratio, dataset_pickle_filepath):
+def main(dataset_ratio, train_ratio, dataset_pickle_filepath, output_pickle_filepath):
     dataset = load_dataset('./data', dataset_ratio, dataset_pickle_filepath)
     print('数据集读取成功，比例 {} ,总数 {}'.format(dataset_ratio, len(dataset)))
     word_set = create_word_set(dataset)
@@ -204,13 +217,18 @@ def main(dataset_ratio, train_ratio, dataset_pickle_filepath):
     vectors, labels = words2vectors(word_set, dataset)
     print('词向量创建成功')
     train_vectors, train_labels, test_vectors, test_labels = split_vectors_by_ratio(vectors, labels, train_ratio)
-    print('数据集切分成功，ratio {}，训练集长度 {}，测试集长度 {}'.format(train_ratio, train_vectors.shape[0], test_vectors.shape[0]))
-    print('开始训练，训练集长度', train_vectors.shape[0])
+    print('数据集切分成功，ratio {}，训练集长度 {}×{}，测试集长度 {}×{}'.format(train_ratio, train_vectors.shape[0], train_vectors.shape[1],
+                                                            test_vectors.shape[0], test_vectors.shape[1]))
+    print('开始训练，训练集长度 {}×{}'.format(train_vectors.shape[0], train_vectors.shape[1]))
     Pspam, Pham, PS, PH = trainNB(train_vectors, train_labels)
-    print('开始测试，测试集长度', test_vectors.shape[0])
+    print('开始训练，测试集长度 {}×{}'.format(test_vectors.shape[0], test_vectors.shape[1]))
     predict_vector = predictNB(test_vectors, Pspam, Pham, PS, PH)
     accuary = numpy.mean(predict_vector == test_labels)
     print('测试完成，准确率 {}%'.format(accuary * 100))
+
+    output = Model(word_set, Pspam, Pham, PS, PH, datetime.now())
+    with open(output_pickle_filepath, 'wb') as f:
+        pickle.dump(output, f)
 
 
 if __name__ == '__main__':
