@@ -76,7 +76,17 @@ def create_word_set(dataset):
     return list(word_set)
 
 
-def words2vectors(word_set, dataset):
+def words2vector(word_set, words, word_dict=None):
+    if word_dict is None:
+        word_dict = {word: i for i, word in enumerate(word_set)}
+    vector = numpy.zeros(len(word_set), dtype=numpy.uint8)
+    for word in words:
+        if word in word_set:
+            vector[word_dict[word]] = 1
+    return vector
+
+
+def dataset2vectors(word_set, dataset):
     """
     将数据集转化为词向量
     :param word_set: 由 create_word_set 得到的不含重复词的词集
@@ -154,7 +164,7 @@ def trainNB(vectors, labels):
     return Pspam, Pham, PS, PH
 
 
-def predictNB(vectors, Pspam, Pham, PS, PH):
+def predictNB(vectors, Pspam, Pham, PS, PH, show_progress_bar=True):
     """
     判断垃圾/正常邮件
     :param vectors:         需要判断的邮件集的词向量矩阵
@@ -168,19 +178,22 @@ def predictNB(vectors, Pspam, Pham, PS, PH):
     Pspam, Pham = numpy.math.log(Pspam), numpy.math.log(Pham)
     PS, PH = numpy.log(PS), numpy.log(PH)
     predict_vector = numpy.zeros(vectors.shape[0], dtype=numpy.uint8)
-    # CLI 进度条
-    pbar = tqdm(total=vectors.shape[0])
-    # 进度条计数，满 100 更新一次进度条
-    pcount = 0
+    if show_progress_bar:
+        # CLI 进度条
+        pbar = tqdm(total=vectors.shape[0])
+        # 进度条计数，满 100 更新一次进度条
+        pcount = 0
     for i, vector in enumerate(vectors):
         if (Pspam + sum(vector * PS)) > (Pham + sum(vector * PH)):
             predict_vector[i] = 1
-        pcount += 1
-        if pcount == 100:
-            pbar.update(pcount)
-            pcount = 0
-    pbar.update(pcount)
-    pbar.close()
+        if show_progress_bar:
+            pcount += 1
+            if pcount == 100:
+                pbar.update(pcount)
+                pcount = 0
+    if show_progress_bar:
+        pbar.update(pcount)
+        pbar.close()
     # predict_vector = [1 if (Pspam + sum(vector * PS)) >= (Pham + sum(vector * PH)) else 0 for vector in vectors]
     return predict_vector
 
@@ -214,7 +227,7 @@ def main(dataset_ratio, train_ratio, dataset_pickle_filepath, output_pickle_file
     print('数据集读取成功，比例 {} ,总数 {}'.format(dataset_ratio, len(dataset)))
     word_set = create_word_set(dataset)
     print('词集创建成功，长度', len(word_set), '，开始创建词向量')
-    vectors, labels = words2vectors(word_set, dataset)
+    vectors, labels = dataset2vectors(word_set, dataset)
     print('词向量创建成功')
     train_vectors, train_labels, test_vectors, test_labels = split_vectors_by_ratio(vectors, labels, train_ratio)
     print('数据集切分成功，ratio {}，训练集长度 {}×{}，测试集长度 {}×{}'.format(train_ratio, train_vectors.shape[0], train_vectors.shape[1],

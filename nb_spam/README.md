@@ -44,17 +44,18 @@ python predict.py -r 1 -t 0.67 -d ./dataset.pickle
 ### 启动 Web 服务器
 ```shell
 # python web.py --help                                                        
-Usage: web.py [OPTIONS]
-
-Options:
-  -h TEXT     监听 Host，default '0.0.0.0'
-  -p INTEGER  监听端口，default 5000
+Usage: web.py [OPTIONS]                                                                                                                                          [3/17]
+                                                                                   
+Options:                      
+  -h TEXT     监听 Host，default '0.0.0.0'            
+  -p INTEGER  监听端口，default 5000                                               
   -d          开启调试模式
   -m TEXT     模型pickle文件路径，default './model.pickle'
-  -z TEXT     中文字体文件路径
-  --help      Show this message and exit.
+  -z TEXT     中文字体文件路径           
+  -s TEXT     禁用词表 GLOB，default ./stopwords/*.txt
+  --help      Show this message and exit. 
 ```
 例如：
 ```shell
-python web.py -z /usr/share/fonts/wenquanyi/wqy-microhei/wqy-microhei.ttc -d
+python web.py -d -z /usr/share/fonts/wenquanyi/wqy-microhei/wqy-microhei.ttc -s 'stopwords/\*.txt'
 ```

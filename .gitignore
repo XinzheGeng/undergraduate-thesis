@@ -17,3 +17,27 @@ nb_spam/data
 nb_spam/dataset.pickle
 nb_spam/model.pickle
 nb_spam/static/images/*wordcloud*.png
+
+
+nb_spam_frontend/.DS_Store
+nb_spam_frontend/node_modules
+nb_spam_frontend/dist
+
+# local env files
+nb_spam_frontend/.env.local
+nb_spam_frontend/.env.*.local
+
+# Log files
+nb_spam_frontend/npm-debug.log*
+nb_spam_frontend/yarn-debug.log*
+nb_spam_frontend/yarn-error.log*
+
+# Editor directories and files
+nb_spam_frontend/.idea
+nb_spam_frontend/.vscode
+nb_spam_frontend/*.suo
+nb_spam_frontend/*.ntvs*
+nb_spam_frontend/*.njsproj
+nb_spam_frontend/*.sln
+nb_spam_frontend/*.sw*
+nb_spam_frontend/.netlify

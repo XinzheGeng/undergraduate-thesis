@@ -82,7 +82,7 @@ class Producer(threading.Thread):
             self.queue.put((None, None))
 
 
-def load_stop_list(file_glob):
+def load_stop_words(file_glob):
     """
     加载停用词列表
     """
@@ -137,7 +137,7 @@ def make_data_dir(target_dir):
 @click.option('-n', 'worker_num', default=4, help='消费者进程数，default 4')
 def run(trec06c_path, stopwords_glob, target_dir, worker_num):
     queue = Queue(worker_num * 4)
-    stop_words = load_stop_list(stopwords_glob)
+    stop_words = load_stop_words(stopwords_glob)
     print('禁用词表加载成功，长度', len(stop_words))
     index = get_index(trec06c_path)
     spam_dir, ham_dir = make_data_dir(target_dir)
