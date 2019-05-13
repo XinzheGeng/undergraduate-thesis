@@ -99,11 +99,42 @@ def identify_mail():
     vector = words2vector(model.word_set, words, model.word_dict)
     vectors = numpy.zeros((1, vector.shape[0]), dtype=numpy.uint8)
     vectors[0] = vector
-    result = predictNB(vectors, model.Pspam, model.Pham, model.PS, model.PH, show_progress_bar=False)[0]
-    ret_data = {'type': 'spam' if result == 1 else 'ham'}
+    results, probabilities = predictNB(vectors, model.Pspam, model.Pham, model.PS, model.PH, show_progress_bar=False)
+    pspam, pham = probabilities[0]
+    ret_data = {'type': 'spam' if results[0] == 1 else 'ham', "pspam": pspam, "pham": pham}
     if len(set(words)) < 20:
         ret_data['warnMessage'] = '结果可能不正确：分词并去重后仅得到{}个词'.format(len(set(words)))
     return jsonify(api_response(data=ret_data))
+
+
+@app.route('/stat')
+def stat():
+    return jsonify(api_response(data={
+        "wordSetCount": len(model.word_set),
+        "stopWordsCount": len(stop_words),
+        "Pspam": model.Pspam,
+        "Pham": model.Pham,
+    }))
+
+
+@app.route('/stat/wordset')
+def word_set():
+    return jsonify(model.word_set)
+
+
+@app.route('/stat/stopwords')
+def stopwords():
+    return jsonify(list(stop_words))
+
+
+@app.route('/stat/PS')
+def PS():
+    return jsonify(model.PS.tolist())
+
+
+@app.route('/stat/PH')
+def PH():
+    return jsonify(model.PH.tolist())
 
 
 @click.command()

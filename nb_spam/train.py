@@ -178,24 +178,28 @@ def predictNB(vectors, Pspam, Pham, PS, PH, show_progress_bar=True):
     Pspam, Pham = numpy.math.log(Pspam), numpy.math.log(Pham)
     PS, PH = numpy.log(PS), numpy.log(PH)
     predict_vector = numpy.zeros(vectors.shape[0], dtype=numpy.uint8)
+    probalities = list()
     if show_progress_bar:
         # CLI 进度条
         pbar = tqdm(total=vectors.shape[0])
         # 进度条计数，满 100 更新一次进度条
         pcount = 0
     for i, vector in enumerate(vectors):
-        if (Pspam + sum(vector * PS)) > (Pham + sum(vector * PH)):
+        pspam = Pspam + sum(vector * PS)
+        pham = Pham + sum(vector * PH)
+        if pspam > pham:
             predict_vector[i] = 1
         if show_progress_bar:
             pcount += 1
             if pcount == 100:
                 pbar.update(pcount)
                 pcount = 0
+        probalities.append((pspam, pham))
     if show_progress_bar:
         pbar.update(pcount)
         pbar.close()
     # predict_vector = [1 if (Pspam + sum(vector * PS)) >= (Pham + sum(vector * PH)) else 0 for vector in vectors]
-    return predict_vector
+    return predict_vector, probalities
 
 
 def split_vectors_by_ratio(vectors, labels, ratio=0.67):
@@ -235,7 +239,7 @@ def main(dataset_ratio, train_ratio, dataset_pickle_filepath, output_pickle_file
     print('开始训练，训练集长度 {}×{}'.format(train_vectors.shape[0], train_vectors.shape[1]))
     Pspam, Pham, PS, PH = trainNB(train_vectors, train_labels)
     print('开始训练，测试集长度 {}×{}'.format(test_vectors.shape[0], test_vectors.shape[1]))
-    predict_vector = predictNB(test_vectors, Pspam, Pham, PS, PH)
+    predict_vector, probabilities = predictNB(test_vectors, Pspam, Pham, PS, PH)
     accuary = numpy.mean(predict_vector == test_labels)
     print('测试完成，准确率 {}%'.format(accuary * 100))
 
