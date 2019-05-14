@@ -4,12 +4,35 @@ from imageio import imread
 from wordcloud import WordCloud
 from train import *
 from preprocess import *
+from web_config import config
 
 app = Flask(__name__, static_folder='./static')
 CORS(app)  # allow CORS for all domains on all routes
 model: Model
 chinese_font_path: str
 stop_words: set
+
+
+def load_model(model_pickle_filepath):
+    with open(model_pickle_filepath, 'rb') as f:
+        return pickle.load(f)
+
+
+def setup_app(app: Flask):
+    """
+    进行一些初始化工作
+    :param app:
+    :return:
+    """
+    app.debug = config['debug']
+    global model, chinese_font_path, stop_words
+    model = load_model(config['model_pickle_filepath'])
+    model.word_dict = {word: i for i, word in enumerate(model.word_set)}
+    chinese_font_path = config['zh_font_filepath']
+    stop_words = load_stop_words(config['stopwords_file_glob'])
+
+
+setup_app(app)
 
 
 def api_response(success=True, data={}, code=0, message=''):
@@ -19,11 +42,6 @@ def api_response(success=True, data={}, code=0, message=''):
         'code': code,
         'message': message
     }
-
-
-def load_model(model_pickle_filepath):
-    with open(model_pickle_filepath, 'rb') as f:
-        return pickle.load(f)
 
 
 @app.route('/')
@@ -137,21 +155,5 @@ def PH():
     return jsonify(model.PH.tolist())
 
 
-@click.command()
-@click.option('-h', 'host', default='0.0.0.0', help='监听 Host，default \'0.0.0.0\'')
-@click.option('-p', 'port', default=5000, help='监听端口，default 5000')
-@click.option('-d', 'debug', is_flag=True, default=False, help='开启调试模式')
-@click.option('-m', 'model_pickle_filepath', default='./model.pickle', help='模型pickle文件路径，default \'./model.pickle\'')
-@click.option('-z', 'zh_font_path', help='中文字体文件路径')
-@click.option('-s', 'stopwords_glob', default='./stopwords/*.txt', help='禁用词表 GLOB，default ./stopwords/*.txt')
-def main(host, port, debug, model_pickle_filepath, zh_font_path, stopwords_glob):
-    global model, chinese_font_path, stop_words
-    model = load_model(model_pickle_filepath)
-    model.word_dict = {word: i for i, word in enumerate(model.word_set)}
-    chinese_font_path = zh_font_path
-    stop_words = load_stop_words(stopwords_glob)
-    app.run(host=host, port=port, debug=debug)
-
-
 if __name__ == '__main__':
-    main()
+    app.run(host=config['host'], port=config['port'], debug=config['debug'])

@@ -1,0 +1,8 @@
+config = {
+    'host': '0.0.0.0',
+    'port': 5000,
+    'debug': True,
+    'model_pickle_filepath': './model.pickle',  # 由 train.py 得到的模型 pickle 文件路径
+    'zh_font_filepath': '/usr/share/fonts/wenquanyi/wqy-microhei/wqy-microhei.ttc',  # 中文字体路径，生成词云要用到
+    'stopwords_file_glob': './stopwords/*.txt',  # 禁用词表文件通配符
+}

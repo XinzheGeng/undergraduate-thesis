@@ -243,6 +243,9 @@ def main(dataset_ratio, train_ratio, dataset_pickle_filepath, output_pickle_file
     accuary = numpy.mean(predict_vector == test_labels)
     print('测试完成，准确率 {}%'.format(accuary * 100))
 
+    # 防止 __main__.Model 问题
+    # https://stackoverflow.com/questions/40287657/load-pickled-object-in-different-file-attribute-error
+    from train import Model
     output = Model(word_set, Pspam, Pham, PS, PH, datetime.now())
     with open(output_pickle_filepath, 'wb') as f:
         pickle.dump(output, f)

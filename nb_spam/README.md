@@ -1,6 +1,9 @@
 # nb_spam 基于朴素贝叶斯的垃圾邮件过滤（识别）
 
 ## 准备工作
+- Python 版本：3.7
+- 创建 VirtualEnv：`virtualenv venv`
+- 激活 VirtualEnv：`source venv/bin/activate`
 - 安装依赖：`pip install -r requirements.txt`
 - 解压数据集：`tar xvf trec06c.tgz`
 - 安装词云（wordcloud）的依赖 `tk`（或者叫`libtk`）
@@ -10,7 +13,7 @@
 
 ### 提前分词
 ```shell
-# python preprocess.py --help
+# python3 preprocess.py --help
 Usage: preprocess.py [OPTIONS]
 
 Options:
@@ -22,12 +25,12 @@ Options:
 ```
 例如：
 ```shell
-python preprocess.py -t ./trec06c -s 'stopwords/\*.txt' -T ./data -n 6
+python3 preprocess.py -t ./trec06c -s 'stopwords/\*.txt' -T ./data -n 6
 ```
 
-### 运行训练集、测试集
+### 运行训练集、测试集，得到模型
 ```shell
-# python train.py --help                            
+# python3 train.py --help                            
 Usage: predict.py [OPTIONS]
 
 Options:
@@ -38,24 +41,30 @@ Options:
 ```
 例如：
 ```shell
-python predict.py -r 1 -t 0.67 -d ./dataset.pickle
+python3 predict.py -r 1 -t 0.67 -d ./dataset.pickle
 ```
 
-### 启动 Web 服务器
+### 启动开发/调试 Web 服务器
+拷贝 `web_config.py.example` 为 `web_config.py` 并修改配置项
+
+然后：
 ```shell
-# python web.py --help                                                        
-Usage: web.py [OPTIONS]                                                                                                                                          [3/17]
-                                                                                   
-Options:                      
-  -h TEXT     监听 Host，default '0.0.0.0'            
-  -p INTEGER  监听端口，default 5000                                               
-  -d          开启调试模式
-  -m TEXT     模型pickle文件路径，default './model.pickle'
-  -z TEXT     中文字体文件路径           
-  -s TEXT     禁用词表 GLOB，default ./stopwords/*.txt
-  --help      Show this message and exit. 
+python3 web.py
 ```
-例如：
+
+### 启动本地正式服务器
 ```shell
-python web.py -d -z /usr/share/fonts/wenquanyi/wqy-microhei/wqy-microhei.ttc -s 'stopwords/\*.txt'
+gunicorn -b 0.0.0.0:8080 -k gevent -w 2 web:app
+```
+
+### 打包 Docker 镜像
+该步骤需要写完成 `运行训练集、测试集，得到模型` 部分
+```shell
+docker build [镜像名称]:[版本号] .
+```
+
+
+### 运行 Docker 镜像
+```shell
+docker run -p 8080:8080 [镜像名称]:[版本号]
 ```

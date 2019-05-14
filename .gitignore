@@ -17,6 +17,7 @@ nb_spam/data
 nb_spam/dataset.pickle
 nb_spam/model.pickle
 nb_spam/static/images/*wordcloud*.png
+nb_spam/web_config.py
 
 
 nb_spam_frontend/.DS_Store
