@@ -238,7 +238,7 @@ def main(dataset_ratio, train_ratio, dataset_pickle_filepath, output_pickle_file
                                                             test_vectors.shape[0], test_vectors.shape[1]))
     print('开始训练，训练集长度 {}×{}'.format(train_vectors.shape[0], train_vectors.shape[1]))
     Pspam, Pham, PS, PH = trainNB(train_vectors, train_labels)
-    print('开始训练，测试集长度 {}×{}'.format(test_vectors.shape[0], test_vectors.shape[1]))
+    print('开始测试，测试集长度 {}×{}'.format(test_vectors.shape[0], test_vectors.shape[1]))
     predict_vector, probabilities = predictNB(test_vectors, Pspam, Pham, PS, PH)
     accuary = numpy.mean(predict_vector == test_labels)
     print('测试完成，准确率 {}%'.format(accuary * 100))

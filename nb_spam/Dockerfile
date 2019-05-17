@@ -1,4 +1,4 @@
-FROM python:3.7.3-stretch
+FROM python:3.7.3-slim-stretch
 
 COPY *.py requirements.txt model.pickle /nb_spam/
 ADD static stopwords /nb_spam/
