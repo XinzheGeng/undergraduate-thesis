@@ -8,6 +8,7 @@
 \usepackage{zhlipsum}
 \usepackage{lipsum}
 \usepackage{fancyhdr}
+\usepackage{pdfpages}
 \pagestyle{fancy}
 % 设计（论文）除封皮外，各页均应加页眉，单线上居中打印页眉文字，页眉文字均为宋体五号“长春理工大学本科毕业设计”或“长春理工大学本科毕业论文”。
 \chead{长春理工大学本科毕业论文}
@@ -41,10 +42,7 @@
 }
 \begin{document}
 % 封面页
-\begin{titlepage}
-  \maketitle
-  \thispagestyle{empty}
-\end{titlepage}
+\includepdf[page=1-2]{论文封面.pdf}
 
 % 摘要、目录等正文之前的页码用罗马数字（I、II、III……），且分别编码
 % 设计（论文）的中文和外文摘要置于目录前，并编入目录。
@@ -64,6 +62,7 @@
   \noindent\heiti\zihao{-4}\textbf{关键字：}摘要  \LaTeX  中文
   % \end{spacing}
 \end{abstract}
+\newpage
 
 \begin{abstract}
   \addcontentsline{toc}{section}{Abstract}
