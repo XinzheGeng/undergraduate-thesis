@@ -1,0 +1,122 @@
+% 正文的中文、符号采用宋体小四，阿拉伯数字及西文字母、符号采用Times New Roman，小四。
+\documentclass[UTF8,zihao=-4]{ctexart}
+\setCJKmainfont{SimSun}
+\setmainfont{Times New Roman}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{zhlipsum}
+\usepackage{lipsum}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+% 设计（论文）除封皮外，各页均应加页眉，单线上居中打印页眉文字，页眉文字均为宋体五号“长春理工大学本科毕业设计”或“长春理工大学本科毕业论文”。
+\chead{长春理工大学本科毕业论文}
+\lhead{}
+\rhead{}
+% 设计（论文）页码：宋体，小五，页面底端居中
+\cfoot{\songti\zihao{-5}\thepage}
+\geometry{a4paper,left=3.17cm,right=3.17cm,top=2.54cm,bottom=2.54cm}  %上下边距2.54cm，左(+装订线0cm)右边距3.17cm,
+\title{基于朴素贝叶斯的垃圾邮件过滤算法}
+\author{150521310 何程斌}
+\date{}
+\renewcommand{\abstractname}{}
+\ctexset{
+  % 各章一级标题序号及标题：宋体三号加粗居中
+  % 目录标题貌似也是 section 标题格式控制
+  % 目录题头为三号宋体字加粗居中书写，目录中各章题序及标题均用宋体，小四；多倍行距1.25，页码对齐，目录自动生成。
+  section = {
+    name = {第,章},
+    format+=\songti\zihao{3}\textbf\centering
+  },
+  % 各章二级标题序号及标题：宋体四号加粗，缩进2个字符；
+  subsection = {
+    format+=\songti\zihao{4}\textbf
+    % indent=2\ccwd
+  },
+  % 各章三级标题序号及标题（含三级标题以下标题）：宋体小四加粗，缩进2个字符。
+  subsubsection = {
+    format+=\songti\zihao{-4}\textbf
+    % indent=2\ccwd
+  }
+}
+\begin{document}
+% 封面页
+\begin{titlepage}
+  \maketitle
+  \thispagestyle{empty}
+\end{titlepage}
+
+% 摘要、目录等正文之前的页码用罗马数字（I、II、III……），且分别编码
+% 设计（论文）的中文和外文摘要置于目录前，并编入目录。
+\pagenumbering{Roman}
+\begin{abstract}
+  \addcontentsline{toc}{section}{摘要}
+  % 中文摘要题头选用模板中样式所定义的“标题1”，居中；宋体，居中，三号，加粗；多倍行距1.25，段前0行，段后1行，取消网格对齐。
+  \begin{center}
+    {\noindent{} \linespread{1.25}\songti\zihao{3}\textbf{摘要}}
+  \end{center}
+  \addvspace{1\baselineskip}
+
+  % 摘要正文选用模板中样式所定义的“正文”，段落首行缩进2个字符，宋体，小四；多倍行距1.25，段前、段后均为0行，取消网格对齐。
+  \linespread{1.25}\songti\zihao{-4}\zhlipsum*[1]\\
+
+  % 关键词与摘要之间空一行。中文关键词之间用2个空格间隔，黑体小四顶格书写。
+  \noindent\heiti\zihao{-4}\textbf{关键字：}摘要  \LaTeX  中文
+  % \end{spacing}
+\end{abstract}
+
+\begin{abstract}
+  \addcontentsline{toc}{section}{Abstract}
+  % 外文摘要题头“Abstract”不可省略。标题“Abstract”选用模板中的样式所定义的“标题1”，居中；Times New Roman，居中，三号，加粗；多倍行距1.25，段前0行，段后1行，取消网格对齐。
+  \begin{center}
+    {\noindent{} \linespread{1.25}\zihao{3}\textbf{Abstract}}
+  \end{center}
+  \addvspace{1\baselineskip}
+
+  % Abstract正文设置：段落首行缩进2字；Times New Roman，小四；多倍行距1.25，段前、段后均为0行，取消网格对齐。
+  \linespread{1.25}\zihao{-4} \lipsum*[1]\\
+
+  % Key words与Abstract正文之间空一行。Key words之间用分号间隔，Times New Roman，小四，顶格书写。
+  \noindent\zihao{-4}\textbf{Key Words:}摘要  \LaTeX  中文
+  % \end{spacing}
+\end{abstract}
+\newpage
+
+% TOC 页
+\linespread{1.25}
+\tableofcontents
+\newpage
+
+% 正文以后的页码用阿拉伯数字（1、2、3……）编排页码
+\pagenumbering{arabic}
+\section{引言}
+\zhlipsum*[2]
+
+\section{国内外研究现状}
+
+\subsection{研究现状一}
+\zhlipsum*[3]
+
+\subsubsection{研究现状二}
+\zhlipsum*[3]
+
+\section{总体设计}
+\zhlipsum*[4]
+
+\section{详细设计}
+\zhlipsum*[5]
+
+\section{结论}
+\zhlipsum*[6]
+
+
+\begin{thebibliography}{99}
+  % 参考文献正文字体：宋体五号，多倍行距1.25，段前、段后均为0行。
+  \linespread{1.25}\songti\zihao{5}
+  \bibitem{ref1}Russell, Stuart; Norvig, Peter. Artificial Intelligence: A Modern Approach 2nd. Prentice Hall. 2003 [1995]. ISBN 978-0137903955.
+  \bibitem{ref2}杨雷,曹翠玲,孙建国,张立国.改进的朴素贝叶斯算法在垃圾邮件过滤中的研究[J].通信学报,2017,38(04):140-148.
+  \bibitem{ref3}张培,纪鸿旭,李璐.基于朴素贝叶斯的中文垃圾邮件过滤[J].信息与电脑(理论版),2017(07):79-81.
+  \bibitem{ref4}马哲. 垃圾邮件过滤系统的研究与实现[D]. 浙江大学, 2005.
+  \bibitem{pkuseg}Xu Sun, Houfeng Wang, Wenjie Li. Fast Online Training with Frequency-Adaptive Learning Rates for Chinese Word Segmentation and New Word Detection. Proceedings of ACL. 253–262. 2012
+\end{thebibliography}
+\end{document}

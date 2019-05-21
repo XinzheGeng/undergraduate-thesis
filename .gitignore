@@ -1,14 +1,17 @@
+auto
 *.out
 *.aux
 *.fdb_latexmk
 *.log
 *.pdf
+*.toc
 *.synctex.gz
 An Evaluation of Naive Bayesian Anti-Spam Filtering翻译.docx
 本科毕业设计开题报告.docx
 *.zip
 demo.*
 *.fls
+_region*
 nb_spam/__pycache__
 nb_spam/trec06c
 nb_spam/venv
