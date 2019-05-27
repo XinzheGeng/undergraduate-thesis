@@ -1,6 +1,7 @@
 % 正文的中文、符号采用宋体小四，阿拉伯数字及西文字母、符号采用Times New Roman，小四。
 \documentclass[UTF8,zihao=-4]{ctexart}
-\setCJKmainfont{SimSun}
+\setCJKmainfont[BoldFont=SimHei]{SimSun}
+\setCJKsansfont{SimHei}
 \setmainfont{Times New Roman}
 \usepackage{geometry}
 \usepackage{setspace}
@@ -11,7 +12,7 @@
 \usepackage{pdfpages}
 \pagestyle{fancy}
 % 设计（论文）除封皮外，各页均应加页眉，单线上居中打印页眉文字，页眉文字均为宋体五号“长春理工大学本科毕业设计”或“长春理工大学本科毕业论文”。
-\chead{长春理工大学本科毕业论文}
+\chead{\songti\zihao{5}长春理工大学本科毕业论文}
 \lhead{}
 \rhead{}
 % 设计（论文）页码：宋体，小五，页面底端居中
@@ -47,38 +48,34 @@
 % 摘要、目录等正文之前的页码用罗马数字（I、II、III……），且分别编码
 % 设计（论文）的中文和外文摘要置于目录前，并编入目录。
 \pagenumbering{Roman}
-\begin{abstract}
+\section*{摘要}
   \addcontentsline{toc}{section}{摘要}
   % 中文摘要题头选用模板中样式所定义的“标题1”，居中；宋体，居中，三号，加粗；多倍行距1.25，段前0行，段后1行，取消网格对齐。
-  \begin{center}
-    {\noindent{} \linespread{1.25}\songti\zihao{3}\textbf{摘要}}
-  \end{center}
-  \addvspace{1\baselineskip}
+  %\addvspace{0.5\baselineskip}
 
   % 摘要正文选用模板中样式所定义的“正文”，段落首行缩进2个字符，宋体，小四；多倍行距1.25，段前、段后均为0行，取消网格对齐。
-  \linespread{1.25}\songti\zihao{-4}\zhlipsum*[1]\\
+  \linespread{1.25}\songti\zihao{-4}
+   近些年随着互联网的快速发展，电子邮件得到了广泛的使用，但同时也带来了垃圾邮件问题。本文提出了一种基于朴素贝叶斯算法的垃圾邮件过滤技术，进行了过滤算法的设计与实现。并分析了数据集大小、训练集大小、禁用词表对过滤算法性能的影响，最后通过仿真实验证明该垃圾邮件过滤算法的有效性。
+   \\
 
   % 关键词与摘要之间空一行。中文关键词之间用2个空格间隔，黑体小四顶格书写。
-  \noindent\heiti\zihao{-4}\textbf{关键字：}摘要  \LaTeX  中文
+  {\noindent\heiti\zihao{-4}\textbf{关键字：}朴素贝叶斯；反垃圾邮件；邮件分类}
   % \end{spacing}
-\end{abstract}
 \newpage
 
-\begin{abstract}
+\section*{Abstract}
   \addcontentsline{toc}{section}{Abstract}
   % 外文摘要题头“Abstract”不可省略。标题“Abstract”选用模板中的样式所定义的“标题1”，居中；Times New Roman，居中，三号，加粗；多倍行距1.25，段前0行，段后1行，取消网格对齐。
-  \begin{center}
-    {\noindent{} \linespread{1.25}\zihao{3}\textbf{Abstract}}
-  \end{center}
-  \addvspace{1\baselineskip}
+  % \addvspace{0.5\baselineskip}
 
   % Abstract正文设置：段落首行缩进2字；Times New Roman，小四；多倍行距1.25，段前、段后均为0行，取消网格对齐。
-  \linespread{1.25}\zihao{-4} \lipsum*[1]\\
+  \linespread{1.25}\zihao{-4}
+	In recent years, with the rapid development of the Internet, e-mail has been widely used, but it also brings spam problems. This thesis proposes a spam filtering technology based on Naive Bayesian algorithm, and designs and implements the filtering algorithm. The effects of dataset size, training set size and stop words on the performance of filtering algorithm are analyzed. Finally, the effectiveness of the spam filtering algorithm is proved by simulation experiments.
+	\\
 
   % Key words与Abstract正文之间空一行。Key words之间用分号间隔，Times New Roman，小四，顶格书写。
-  \noindent\zihao{-4}\textbf{Key Words:}摘要  \LaTeX  中文
+  \noindent\zihao{-4}\textbf{Key Words: }Navie Bayes, Anti-Spam, E-mail Classification
   % \end{spacing}
-\end{abstract}
 \newpage
 
 % TOC 页
@@ -86,30 +83,70 @@
 \tableofcontents
 \newpage
 
+\songti\zihao{-4}
 % 正文以后的页码用阿拉伯数字（1、2、3……）编排页码
 \pagenumbering{arabic}
-\section{引言}
-\zhlipsum*[2]
+\section{绪论}
+\subsection{本课题研究的目的及意义}
+随着互联网的快速发展，电子邮件逐渐成为人们生活中不可或缺的通讯工具。但是，电子邮件在给人们带来便利的同时，也带来了不少问题，其中最严重的问题莫过于泛滥的垃圾邮件。据Securelist（卡巴斯基实验室旗下的IT安全信息资源网站）于2017年第三季度发布的全球垃圾邮件数据显示，2017年第三季度，垃圾邮件占全球电子邮件的58.02\%，9月垃圾邮件占比最高（59.56\%）。中国是垃圾邮件的最大来源（12.24\%），前一个季度的最大来源越南的份额则下降1.2个百分点（11.17\%），排在第二位。美国排在第三位（9.62\%），印度位居第四（8.49\%）。垃圾邮件占据了网络中巨大的带宽资资源，对用户的日常工作生活带了了极大的困扰。并且，不少垃圾邮件还附带着恶意附件和网络钓鱼链接，给用户的计算机、甚至个人财产带来了威胁。
 
-\section{国内外研究现状}
+朴素贝叶斯分类器是一系列以假设特征之间强（朴素）独立下运用贝叶斯定理为基础的简单概率分类器，自20世纪50年代已广泛研究。在20世纪60年代初就以另外一个名称引入到文本信息检索界中，并仍然是文本分类的一种热门（基准）方法，在垃圾邮件识别领域中已有了非常成熟的应用。
 
-\subsection{研究现状一}
-\zhlipsum*[3]
+本文基于朴素贝叶斯算法实现了一个垃圾邮件过滤器，对收集到的大量合法邮件和垃圾邮件作为样本进行有指导的学习，提取邮件的主题与正文，建立一个有效的特征词库，从而对垃圾邮件进行高准确率的识别。
 
-\subsubsection{研究现状二}
-\zhlipsum*[3]
+\subsection{国内外研究现状}
 
-\section{总体设计}
-\zhlipsum*[4]
+将一篇英文文本转换成单词集合是十分容易且精确的，因为英文单词之间存在空格和标点符号等天然分割符号。而中文博大精深，远比英文复杂，一个字可能包含了很多种意思，甚至有贬有褒，是不具备独立而又有效的语义的。因此，相比起来在垃圾邮件分类领域国外比国内发展的迅速得多。
 
-\section{详细设计}
+总体来讲，目前主要有以下几种垃圾邮件过滤技术。
+\renewcommand\labelenumi{(\theenumi)}
+\begin{enumerate}
+	\item 黑白名单过滤：将经常发送垃圾邮件的域名或者 IP 放入黑名单列表中，当收到新邮件时查询发件人的域名或者IP是否在黑名单列表中。但当对方采用代理IP、伪造地址等手段发送邮件时，该方法就失效了。
+	\item 关键词过滤：创建垃圾邮件的特征关键词表，当收到新邮件时判断此邮件正文中是否存在这些非法关键词。但这种技术需要建立一个庞大的特征关键词表。
+	\item 规则评分过滤：通过对大量邮件的综合分析， 得到一个庞大的规则库。规则库里的每条规则都对应一个分数，计算收到的新邮件获得的分数，总分超过特定的阈值时该邮件就会被判定为垃圾邮件。但因规则数量有限，无法检测匹配规则条数为0的邮件。
+	\item 内容过滤：可分为规则角度和内容统计，用规则方法需建立完备的规则库，速度较慢。而本文所研究的基于朴素贝叶斯算法的过滤方法是一种基于内容统计的过滤方法，准确性较高，并且具有自我学习功能，能够不断地动态调整垃圾邮件集和合法邮件集的概率。
+\end{enumerate}
+
+\subsection{本论文的组织结构}
+	论文共分为五章,组织结构如下：
+	
+	第一章绪论。概述了朴素贝叶斯算法与垃圾邮件过滤的相关研究内容,国内外研究现状。提出了本文要研究的内容。
+	
+	第二章朴素贝叶斯。介绍了朴素贝叶斯算法的基本概念，朴素贝叶斯算法的的步骤和方法，分析了朴素贝叶斯算法面临的主要问题和困难等内容,为之后的章节奠定坚实的理论基础。
+	
+	第三章垃圾邮件过滤。首先介绍了垃圾邮件的特征等基本概念，并介绍了评价垃圾邮件过滤算法的维度——召回率(Recall)和精确率(Precision)，然后结合了第二章介绍的朴素贝叶斯算法，详细描述了将朴素贝叶斯算法应用于垃圾邮件过滤领域的步骤。
+	
+	第四章算法改进。介绍了第三章的算法实现的不足，以及改进算法的方法。并详细介绍了如何为算法添加自主学习功能。
+	
+	第五章实验结果。本章是本文的重点，对特定大小的数据集进行实验，得到了召回率、精确率等，并分析了数据集大小、训练集大小、禁用词表对实验结果的影响，由此验证了基于朴素贝叶斯算法的垃圾邮件过滤算法的可行有效性。
+
+\section{朴素贝叶斯}
+	贝叶斯定理表示可以在统计数据的基础上，依据某些特征，计算未分类的事件被分为各个类别的概率，从而实现分类。而朴素贝叶斯则是在贝叶斯定理的基础上，假设所有特征都相互独立，极大了降低了计算难度，并且研究表明朴素贝叶斯算法在特定领域（如文本分类，满足了所有特征都相互独立的假设）对分类结果的准确性的影响并不大。
+	
+	朴素贝叶斯算法的基本原理如下：
+	
+	用一个$\vec{f}$维特征向量来表示待分类的个体，其中$f_i(i=1,2,...,n)$表示第$i$个特征，$n$是特征的个数。则该个体分类为$c_j(j=1,2,...,m)$的概率为：
+	
+	$$P(C=c|\vec{F}=\vec{f})=\frac{P(C=c) \cdot P(\vec{F}=\vec{f}|C=c)} {P(\vec{F}=\vec{f})}$$
+	
+	其中，$P(\vec{F}=\vec{f}=\sum\limits_{j=1}^{m} P(C=c_j) \cdot P(\vec{F}=\vec{f}|C=c_j$
+	
+
+\section{垃圾邮件过滤}
 \zhlipsum*[5]
 
-\section{结论}
+\section{算法改进}
 \zhlipsum*[6]
 
+\section{实验结果}
+\zhlipsum[7-9]
+
+\section*{总结}
+\addcontentsline{toc}{section}{总结}
+\zhlipsum[8-9]
 
 \begin{thebibliography}{99}
+  \addcontentsline{toc}{section}{参考文献}
   % 参考文献正文字体：宋体五号，多倍行距1.25，段前、段后均为0行。
   \linespread{1.25}\songti\zihao{5}
   \bibitem{ref1}Russell, Stuart; Norvig, Peter. Artificial Intelligence: A Modern Approach 2nd. Prentice Hall. 2003 [1995]. ISBN 978-0137903955.
@@ -118,4 +155,15 @@
   \bibitem{ref4}马哲. 垃圾邮件过滤系统的研究与实现[D]. 浙江大学, 2005.
   \bibitem{pkuseg}Xu Sun, Houfeng Wang, Wenjie Li. Fast Online Training with Frequency-Adaptive Learning Rates for Chinese Word Segmentation and New Word Detection. Proceedings of ACL. 253–262. 2012
 \end{thebibliography}
+
+\section*{致谢}
+\addcontentsline{toc}{section}{致谢}
+	通过一阶段的努力，我的毕业设计《基于朴素贝叶斯的垃圾邮件过滤算法》终于完成了，这意味着大学生活即将结束。
+	首先，我要感谢我的导师徐晶老师，他严谨细致、一丝不苟的作风一直是我学习中的榜样，给我起到了指明灯的作用。尽管事务繁忙，陈老师仍然在我彷徨和困惑的时候给与了及时的帮助和指导。在本论文的写作过程中，陈老师倾注了大量的心血，从开题报告到毕业论文的撰写，从写作提纲到一遍又一遍的指出稿中的具体问题，严格把关，循循善诱，在此我表示衷心感谢。同时，感谢所有任课老师和所有同学在这四年来给自己的指导和帮助，是他们教会了我专业知识，教会了我如何学习，教会了我如何做人。正是由于他们，我才能在各方面取得显著的进步，感谢计算机学院的所有同学，给我创造了一个团结进取，充满温暖，充满爱的大集体，使我快乐而且充实地渡过了人生中最美好的大学时光。
+	
+	感谢我的同窗们，正是有了互相帮助一起学习的日子，才让我的大学多姿多彩。
+
+\appendix
+\section{附录}
+\zhlipsum*[10]
 \end{document}
