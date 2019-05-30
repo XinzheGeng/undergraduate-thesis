@@ -1,4 +1,5 @@
 """
+预处理模块
 多进程分词 trec06 数据集
 """
 import glob
@@ -137,7 +138,11 @@ def make_data_dir(target_dir):
 @click.option('-n', 'worker_num', default=4, help='消费者进程数，default 4')
 def run(trec06c_path, stopwords_glob, target_dir, worker_num):
     queue = Queue(worker_num * 4)
-    stop_words = load_stop_words(stopwords_glob)
+    if len(stopwords_glob) == 0:
+        stop_words = set()
+    else:
+        stop_words = load_stop_words(stopwords_glob)
+    print(stop_words)
     print('禁用词表加载成功，长度', len(stop_words))
     index = get_index(trec06c_path)
     spam_dir, ham_dir = make_data_dir(target_dir)

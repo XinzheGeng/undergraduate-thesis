@@ -3,13 +3,18 @@
 \setCJKmainfont[BoldFont=SimHei]{SimSun}
 \setCJKsansfont{SimHei}
 \setmainfont{Times New Roman}
+\setmonofont{Consolas}
 \usepackage{geometry}
 \usepackage{setspace}
 \usepackage{graphicx}
-\usepackage{zhlipsum}
-\usepackage{lipsum}
 \usepackage{fancyhdr}
 \usepackage{pdfpages}
+\usepackage{float}
+\usepackage[font=small]{caption}
+\usepackage{listings}
+\usepackage{pythonhighlight}
+\usepackage{pgfplots}               % 使用pgfplots绘图工具包
+\pgfplotsset{width=7cm,compat=1.13} % 图片绘制的宽度是7cm,使用的pgfplots版本为1.13
 \pagestyle{fancy}
 % 设计（论文）除封皮外，各页均应加页眉，单线上居中打印页眉文字，页眉文字均为宋体五号“长春理工大学本科毕业设计”或“长春理工大学本科毕业论文”。
 \chead{\songti\zihao{5}长春理工大学本科毕业论文}
@@ -88,7 +93,8 @@
 \pagenumbering{arabic}
 \section{绪论}
 \subsection{本课题研究的目的及意义}
-随着互联网的快速发展，电子邮件逐渐成为人们生活中不可或缺的通讯工具。但是，电子邮件在给人们带来便利的同时，也带来了不少问题，其中最严重的问题莫过于泛滥的垃圾邮件。据Securelist（卡巴斯基实验室旗下的IT安全信息资源网站）于2017年第三季度发布的全球垃圾邮件数据显示，2017年第三季度，垃圾邮件占全球电子邮件的58.02\%，9月垃圾邮件占比最高（59.56\%）。中国是垃圾邮件的最大来源（12.24\%），前一个季度的最大来源越南的份额则下降1.2个百分点（11.17\%），排在第二位。美国排在第三位（9.62\%），印度位居第四（8.49\%）。垃圾邮件占据了网络中巨大的带宽资资源，对用户的日常工作生活带了了极大的困扰。并且，不少垃圾邮件还附带着恶意附件和网络钓鱼链接，给用户的计算机、甚至个人财产带来了威胁。
+随着互联网的快速发展，电子邮件逐渐成为人们生活中不可或缺的通讯工具。但是，电子邮件在给人们带来便利的同时，也带来了不少问题，其中最严重的问题莫过于泛滥的垃圾邮件。据Securelist（卡巴斯基实验室旗下的IT安全信息资源网站）于2017年第三季度发布的全球垃圾邮件数据显示，2017年第三季度，垃圾邮件占全球电子邮件的58.02\%，9月垃圾邮件占比最高（59.56\%）。中国是垃圾邮件的最大来可以自动检测tex文件的编码，提示是否按照对应编码方式打开。这对一些初级用户使用非utf-8格式的编码提供了方便。
+源（12.24\%），前一个季度的最大来源越南的份额则下降1.2个百分点（11.17\%），排在第二位。美国排在第三位（9.62\%），印度位居第四（8.49\%）。垃圾邮件占据了网络中巨大的带宽资资源，对用户的日常工作生活带了了极大的困扰。并且，不少垃圾邮件还附带着恶意附件和网络钓鱼链接，给用户的计算机、甚至个人财产带来了威胁。
 
 朴素贝叶斯分类器是一系列以假设特征之间强（朴素）独立下运用贝叶斯定理为基础的简单概率分类器，自20世纪50年代已广泛研究。在20世纪60年代初就以另外一个名称引入到文本信息检索界中，并仍然是文本分类的一种热门（基准）方法，在垃圾邮件识别领域中已有了非常成熟的应用。
 
@@ -98,72 +104,1084 @@
 
 将一篇英文文本转换成单词集合是十分容易且精确的，因为英文单词之间存在空格和标点符号等天然分割符号。而中文博大精深，远比英文复杂，一个字可能包含了很多种意思，甚至有贬有褒，是不具备独立而又有效的语义的。因此，相比起来在垃圾邮件分类领域国外比国内发展的迅速得多。
 
+将英文文本转换为单词集合非常简单和精确，因为在英语单词之间有自然的分割符号，如空格和标点符号。中文是博大精深的，比英语更复杂，一句话可能包含很多含义，它没有独立有效的语义，在不同语境下同一句话甚至能够体现了不同的语义。因此，与国内垃圾邮件分类的发展相比，国外发展快得多。
+
 总体来讲，目前主要有以下几种垃圾邮件过滤技术。
 \renewcommand\labelenumi{(\theenumi)}
 \begin{enumerate}
 	\item 黑白名单过滤：将经常发送垃圾邮件的域名或者 IP 放入黑名单列表中，当收到新邮件时查询发件人的域名或者IP是否在黑名单列表中。但当对方采用代理IP、伪造地址等手段发送邮件时，该方法就失效了。
 	\item 关键词过滤：创建垃圾邮件的特征关键词表，当收到新邮件时判断此邮件正文中是否存在这些非法关键词。但这种技术需要建立一个庞大的特征关键词表。
 	\item 规则评分过滤：通过对大量邮件的综合分析， 得到一个庞大的规则库。规则库里的每条规则都对应一个分数，计算收到的新邮件获得的分数，总分超过特定的阈值时该邮件就会被判定为垃圾邮件。但因规则数量有限，无法检测匹配规则条数为0的邮件。
-	\item 内容过滤：可分为规则角度和内容统计，用规则方法需建立完备的规则库，速度较慢。而本文所研究的基于朴素贝叶斯算法的过滤方法是一种基于内容统计的过滤方法，准确性较高，并且具有自我学习功能，能够不断地动态调整垃圾邮件集和合法邮件集的概率。
+	\item 内容过滤：它可以分为规则角度和内容统计。本文研究的基于朴素贝叶斯算法的滤波方法是基于容统计的过滤方法，准确性较高，并且具有自我学习功能，能够不断地动态调整垃圾邮件集和合法邮件集的概率。
 \end{enumerate}
 
 \subsection{本论文的组织结构}
-	论文共分为五章,组织结构如下：
+	本文共分为五章,组织结构如下：
 	
-	第一章绪论。概述了朴素贝叶斯算法与垃圾邮件过滤的相关研究内容,国内外研究现状。提出了本文要研究的内容。
+	第一章绪论。概述了朴素贝叶斯算法和垃圾邮件过滤的研究内容，国内外研究现状。提出了本文要研究的内容。
 	
-	第二章朴素贝叶斯。介绍了朴素贝叶斯算法的基本概念，朴素贝叶斯算法的的步骤和方法，分析了朴素贝叶斯算法面临的主要问题和困难等内容,为之后的章节奠定坚实的理论基础。
+	第二章朴素贝叶斯。介绍了朴素贝叶斯算法的基本概念，即朴素贝叶斯算法的步骤和方法，为之后的章节奠定坚实的理论基础。
 	
-	第三章垃圾邮件过滤。首先介绍了垃圾邮件的特征等基本概念，并介绍了评价垃圾邮件过滤算法的维度——召回率(Recall)和精确率(Precision)，然后结合了第二章介绍的朴素贝叶斯算法，详细描述了将朴素贝叶斯算法应用于垃圾邮件过滤领域的步骤。
+	第三章垃圾邮件过滤算法实现。首先介绍了垃圾邮件的特征等基本概念，然后结合第二章介绍的朴素贝叶斯算法，详细描述了将朴素贝叶斯算法应用于垃圾邮件过滤领域的步骤。
 	
-	第四章算法改进。介绍了第三章的算法实现的不足，以及改进算法的方法。并详细介绍了如何为算法添加自主学习功能。
+	第四章算法改进。介绍了第三章的算法实现的不足，以及改进算法的方法。
 	
-	第五章实验结果。本章是本文的重点，对特定大小的数据集进行实验，得到了召回率、精确率等，并分析了数据集大小、训练集大小、禁用词表对实验结果的影响，由此验证了基于朴素贝叶斯算法的垃圾邮件过滤算法的可行有效性。
+	第五章实验结果。本章是本文的重点，对算法进行对比测试，得到了准确率、精确率、召回率等评估数据，并分析了训练集大小、禁用词表对实验结果的影响，由此验证了基于朴素贝叶斯算法的垃圾邮件过滤算法的可行有效性。
 
 \section{朴素贝叶斯}
-	贝叶斯定理表示可以在统计数据的基础上，依据某些特征，计算未分类的事件被分为各个类别的概率，从而实现分类。而朴素贝叶斯则是在贝叶斯定理的基础上，假设所有特征都相互独立，极大了降低了计算难度，并且研究表明朴素贝叶斯算法在特定领域（如文本分类，满足了所有特征都相互独立的假设）对分类结果的准确性的影响并不大。
+	贝叶斯定理表示根据基于统计数据得到的某些特征来计算未分类的样本被分类为各个类别的概率，比较概率从而实现分类。在介绍贝叶斯定理之前，需要介绍一下条件概率和完全概率公式。
 	
-	朴素贝叶斯算法的基本原理如下：
+	条件概率：指在事件$B$发生的前提下，事件$A$发生的概率，即$P(A|B)=\frac{P(A\cap B)}{P(B)}$，由此可得$P(A \cap B)=P(A|B) \cdot P(B)$，同理$P(A \cap B) = P(B|A) \cdot P(A)$，所以$P(A|B) \cdot P(B)=P(B|A|) \cdot P(A)$，由此就得到了条件概率的计算公式$P(A|B)=\frac{P(B|A) \cdot P(A)}{P(B)}$。
 	
-	用一个$\vec{f}$维特征向量来表示待分类的个体，其中$f_i(i=1,2,...,n)$表示第$i$个特征，$n$是特征的个数。则该个体分类为$c_j(j=1,2,...,m)$的概率为：
+	全概率公式：假定样本空间$S$，$A_1,A_2,\cdots,A_n$代表$S$的一个划分，即$S=\sum\limits_{i=1}^{n}A_i$，$P(A_i)>0$。$B$ 为$S$的某一事件，在这种情况下，事件$B$可以被分为$n$个部分，即$P(B)=\sum\limits_{i=1}^{n}P(B\cap A_i)$，在先前的推导中我们已知$P(B \cap A)=P(B|A) \cdot P(A)$，相互结合就可得到全概率公式$P(B)=\sum\limits_{i=1}^{n}P(B|A_i) \cdot P(A_i)$。
 	
-	$$P(C=c|\vec{F}=\vec{f})=\frac{P(C=c) \cdot P(\vec{F}=\vec{f}|C=c)} {P(\vec{F}=\vec{f})}$$
+	将全概率公式代入条件概率公式，就得到了贝叶斯公式：
 	
-	其中，$P(\vec{F}=\vec{f}=\sum\limits_{j=1}^{m} P(C=c_j) \cdot P(\vec{F}=\vec{f}|C=c_j$
+	$$P(A|B) = \frac{P(B|A) \cdot P(B)}{\sum\limits_{i=1}^{n}P(B|A_i) \cdot P(A_i)}$$
 	
+	用一个$n$维特征向量$\vec{f}$来表示待分类的样本$d$，其中$f_i(i=1,2,...,n)$表示第$i$个特征，$n$是特征的个数。则该样本$d$分类为$c_j(j=1,2,...,m)$的概率为：
+	
+	$$P(C=c|\vec{F}=\vec{f})=\frac{P(\vec{F}=\vec{f}|C=c)\cdot P(C=c) } {P(\vec{F}=\vec{f})}$$
+	
+	其中，$P(\vec{F}=\vec{f})=\sum\limits_{j=1}^{m} P(C=c_j) \cdot P(\vec{F}=\vec{f}|C=c_j)$
+	
+	但是，$P(\vec{F}=\vec{f}|C=c)$往往很难计算（$\vec{F}$可能有许多不同的值，并且也存在数据稀疏的问题），这导致贝叶斯定理的直接使用是十分困难的。
+	
+	而朴素贝叶斯则是在贝叶斯定理的基础上，假设所有特征都相互独立，极大了降低了计算难度。与贝叶斯定理相比较，对于特征向量为$\vec{f}=\langle f_1, \ldots, f_n \rangle$的待分类样本$d$，其被分类为$c$分类的概率为：
+	
+	$$P(C=c|\vec{F}=\vec{f})=\frac{P(C=c) \cdot \prod\limits_{i=1}^{n} P(F_i=f_i|C=c)} {P(\vec{F}=\vec{f})}$$
+		
+	同时，$P(\vec{F}=\vec{f})=\sum\limits_{j=1}^{m} P(C=c_j) \cdot \prod\limits_{i=1}^{n}  P(F_i=f_i|C=c_j)$
+	
+	由于$P(\vec{F}=\vec{f})$对于任意分类都是相同的，所以可以将公式进一步省略为：
+	
+	$$P(C=c) \cdot \prod\limits_{i=1}^{n} P(F_i=f_i|C=c)$$
+	
+	所以，仅需计算所有分类对应的该公式的值，比较大小，即可完成分类，这极大地降低了计算难度。
+	
+	并且研究表明朴素贝叶斯算法在特定领域（如文本分类，满足所有特征属性相关性较小的前提）对分类结果的准确性的影响并不大。
 
-\section{垃圾邮件过滤}
-\zhlipsum*[5]
+\section{垃圾邮件过滤算法实现}
+\subsection{系统设计}
+	结合朴素贝叶斯算法的垃圾邮件过滤算法的流程图如图\ref{fig:overall-flowchart}所示：
+	
+	\begin{figure}[ht]
+		\centering
+		\includegraphics[scale=0.5]{pictures/朴素贝叶斯算法的垃圾邮件过滤算法的流程图.png}
+		\caption{朴素贝叶斯算法的垃圾邮件过滤算法的流程图}
+		\label{fig:overall-flowchart}
+	\end{figure}
+
+	按照流程图所示，整个垃圾邮件过滤系统需要两个方面的问题，一是对现有的邮件数据集进行训练，二是对待分类的新邮件进行分类过滤。按此思想设计，得到如图\ref{fig:overall-structure}所示。
+	
+	\begin{figure}[ht]
+		\centering
+		\setlength{\abovecaptionskip}{0.cm}
+		\setlength{\belowcaptionskip}{-0.cm}
+		\includegraphics[scale=0.5]{pictures/系统总体架构图.png}
+		\caption{系统总体架构图}
+		\label{fig:overall-structure}
+	\end{figure}
+
+	依照此架构，可以将系统分割成三部分实现：
+	
+	第一部分用于对邮件进行预处理，如图\ref{fig:preprocess-system}所示。
+	\begin{figure}[ht]
+		\centering
+		\setlength{\abovecaptionskip}{0.cm}
+		\setlength{\belowcaptionskip}{-0.cm}
+		\includegraphics[scale=0.5]{pictures/邮件预处理子系统.png}
+		\caption{邮件预处理子系统}
+		\label{fig:preprocess-system}
+	\end{figure}
+	
+	第二部分用于对过滤器进行训练，如图\ref{fig:train-system}所示。
+	\begin{figure}[ht]
+		\centering
+		\setlength{\abovecaptionskip}{0.cm}
+		\setlength{\belowcaptionskip}{-0.cm}
+		\includegraphics[scale=0.5]{pictures/邮件训练子系统.png}
+		\caption{过滤器训练子系统}
+		\label{fig:train-system}
+	\end{figure}
+		
+	第三部分用于对待分类邮件进行分类过滤，如图\ref{fig:predict-system}所示。
+	\begin{figure}[!ht]
+		\centering
+		\setlength{\abovecaptionskip}{0.cm}
+		\setlength{\belowcaptionskip}{-0.cm}	
+		\includegraphics[scale=0.5]{pictures/邮件分类子系统.png}
+		\caption{邮件分类子系统}
+		\label{fig:predict-system}
+	\end{figure}
+
+
+\subsection{数据集预处理}
+	本设计采用公开的垃圾邮件语料库  trec06。trec06 由国际文本检索会议提供，分为中英文两部分数据集。该数据集收集于真实的邮件，并且保留了邮件的原始格式。本设计仅使用 trec06 的中文数据集部分 trec06c，大约有 61810 条数据。
+
+	根据多用途互联网邮件扩展（MIME）标准，对邮件格式进行解析，提取正文，对内容进行分词、过滤停用词后，依照邮件类别以纯文本文件的格式分类存储。
+		
+	本设计使用的中文分词工具包为北京大学于 2019 年 2 月开源的 pkuseg。相较于业界其他成熟的工具包，如 jieba、THULAC 等，pkuseg 在特定的数据集上拥有更高的粉刺准确率。根据北大研究组的测试结果， pkuseg 分别在示例数据集（MSRA 和 CTB8）上
+降低了 79.33\% 和 63.67\% 的分词错误率。
+	
+	停用词指在自然语言处理中，为节省存储空间、提高处理效率，会过滤掉某些低价值的字或词，如“这”、“那”、“一个”，这些字或词即被称为停用词（Stop Words）。本设计使用的停用词表为哈工大停用词表、百度停用词表和四川大学机器智能实验室停用词库的并集，包含了2313个停用词。
+\subsection{训练算法}
+	首先，读取预处理分词完毕后的数据集，随机打乱，并取其中40000条为训练集，20000条为测试集。将训练集中所有的词语做并集得到一个词集。当使用全部40000条训练样本时，得到的词集长度约为140000左右（本章余下全部数据都是在使用了全部40000条测试样本的前提下得到的）。
+	
+	然后需要将训练集转换成大小为$40000 \times 140000$的矩阵，每一条邮件数据都用一个长度为 140000 的向量表示，即$\vec{w}=\langle w_1,w_2, \cdots ,w_n\rangle$ ，$n=140000$。找到每份邮件的词语在词集中的下标，然后将向量对应下标的值设为1，其余位置则设置为0，表示未出现该词。。
+	
+	
+	开始训练模型。用$c_{spam}$和$c_{ham}$分别表示分类为垃圾邮件和合法邮件。统计训练集中垃圾邮件和合法邮件的数量，除以邮件总数即可得到$P(C=c_{spam})$和$P(C=c_{ham})$。
+	
+	创建两个向量$\vec{sn}$和$\vec{hn}$，长度为 140000，分别代表每个词在垃圾邮件中和正常邮件中出现的次数。遍历训练集矩阵，若为垃圾邮件则将向量加到$\vec{sn}$上，若为合法邮件则将向量加到$\vec{hn}$上。最后，计算$\frac{\vec{sn}}{\sum_{i=1}^{n}sn_i}$和$\frac{\vec{hn}}{\sum_{i=1}^{n}hn_i}$，即可得到向量$\vec{ps}=\langle ps_1,ps_2,\cdots,ps_n\rangle$和$\vec{ph}=\langle ph_1,ph_2,\cdots,ph_n\rangle$。$ps_i$即$P(W=w_i|C=c_{spam})$，在满足垃圾邮件的前提下，词语$w_i$出现的概率，$ph_i$同理。
+	
+	由此，我们就得到了朴素贝叶斯算法公式的所有因子：$P(C=c_{spam})$、$P(C=c_{ham})$、$P(W=w_i|C=c_{spam})$和$P(W=w_i|C=c_{ham})$
+	
+\subsection{分类方法}
+	首先，将待分类邮件经过预处理子系统处理后得到词语列表，根据先前步骤得到的概率向量量$\vec{ps}=\langle ps_1,ps_2,\cdots,ps_n\rangle$和$\vec{ph}=\langle ph_1,ph_2,\cdots,ph_n\rangle$，即可得到该邮件每个词属于垃圾邮件或合法邮件的概率。再结合$P(C=c_{spam})$和$P(C=c_{ham})$，即可根据朴素贝叶斯算法计算得出该邮件属于垃圾邮件的概率$P(C=c_{spam}) \cdot \prod\limits_{i=1}^{n} P(W=w_i|C=c_{spam})$，和属于合法邮件的概率$P(C=c_{ham}) \cdot \prod\limits_{i=1}^{n} P(W=w_i|C=c_{ham})$。比较两者。比较两者，取概率较大的作为该邮件的最终分类。
+	
+	最后，将分类后的邮件归入到数据集中，当分类的邮件数量达到了某一阈值时（如100），可以将分类后的邮件加入训练集重新训练模型。
 
 \section{算法改进}
-\zhlipsum*[6]
+	上一章节描述的过滤算法仍然有一些不足之处，如占用内存过大等问题，本章节将解释这些问题出现的原因，和解决的方法。
+\subsection{稀疏矩阵}
+	在训练模型的步骤中，我们需要使用\texttt{numpy}（一个 \texttt{Python}语言的数学库），来创建用于训练的矩阵。当使用了整个 trec06 数据集时，即40000封邮件，140000个词语，矩阵大小会是$40000\times140000$，即使将数据类型指定为\texttt{uint8}（\texttt{numpy}创建矩阵函数默认数据类型为\texttt{float64}），所需要的内存空间也将达到$40000\times140000\times8=5.21GiB$，如此巨大的开销是不可接受的。
+	
+	但是，当我们观察矩阵的结构：矩阵大小$m\times n$，即$m$个$n$维向量，$m$为邮件数量，$n$为词集大小。每个向量代表一封邮件，向量中的元素为0或1，1代表该邮件出现了该位置的词，0则相反。当使用40000条测试样本时，词集大小为140000左右，而大部分邮件分词后得到的词语数量往往在几十至几百，这导致了每个向量的大部分元素的值都为0（即数据是十分稀疏的），这使得矩阵的创建是十分浪费空间的。
+	
+	根据矩阵数据的稀疏属性，我们可以使用稀疏矩阵（英语：sparse matrix）来压缩矩阵所需的内存空间。最简单的稀疏矩阵往往用一个(x,y,v)元组代表矩阵中的一个元素，x、y代表元素的位置，v代表元素的值。本设计使用\texttt{scipy}（一个\texttt{Python}语言的科学计算库）的\texttt{sparse\_matrix}模块来创建稀疏矩阵。
+\subsection{拉普拉斯平滑}
+	在上文的用例中，我们得到了一个大小为140000的词集。然而，在这140000个词语中，并不是所有词都在垃圾邮件或合法邮件中出现过。在上文的用例中，“爱屋及乌”、“强行”等词从未在垃圾邮件中出现过，而“买家量”、“企业链”等词则从未在合法邮件中出现过。这导致对于这些词语，$ps_i=P(W=w_i|C=c_{spam})$或$ph_i=P(W=w_i|C=c_{ham})$的计算结果为0，使得具有该词语的邮件属于垃圾邮件的概率$P(C=c_{spam}) \cdot \prod\limits_{i=1}^{n} P(W=w_i|C=c_{spam})$，或合法邮件的概率$P(C=c_{ham}) \cdot \prod\limits_{i=1}^{n} P(W=w_i|C=c_{ham})$计算为0，从而导致无法对该邮件进行分类。
+	
+	为了解决零概率的问题，法国数学家拉普拉斯最早提出用加1的方法估计没有出现过的现象的概率，该方法被叫做拉普拉斯平滑。可以在计算概率矩阵$\vec{ps}$和$\vec{ph}$，统计词语在垃圾/合法邮件中出现的次数时，将初值设置为1，即假定所有词语都在垃圾/合法邮件中至少出现过一次，当然，在计算概率时，分母也要加上$n$，即词集的长度。研究表明，在训练样本很大时，每个分量x的计数加1造成的估计概率变化可以忽略不计，同时也可以方便有效的避免零概率问题。
+\subsection{小数向下溢出}
+	大多数词语的出现次数不不多，所以词语的垃圾邮件概率$ps_i$和合法邮件概率$ph_i$往往是一个十分小的小数。而上文中我们使用的计算邮件为垃圾/合法邮件概率的公式中使用了连乘，而连乘算式中的因子都是十分小的小数，导致公式得到的结果往往是一个非常小的小数，小数点后的位数能达到几十甚至几百。而我们知道计算机中浮点数往往有具体的精度，过小的小数会导致算数下溢，从而导致公式的计算结果不正确。
+	
+	根据朴素贝斯算法是比较各个分类概率的大小来决定最终分类的特性，所以，只要确保分类概率之间的大小关系不被改变，我们可以对公式进行一些变形。最简单的方法就是对公式进行一次$\log$运算，所以，公式$P(C=c) \cdot \prod\limits_{i=1}^{n} P(W=w_i|C=c_)$变形为$\log P(C=c) + \sum\limits_{i=1}^{n}\log P(W=w_i|C=c)$，从而解决了小数向下溢出的问题，同时也没有改变最终得到的各个分类的概率之间的大小关系。
 
 \section{实验结果}
-\zhlipsum[7-9]
+	本次实验的环境如表\ref{tab:env}所示：
+	\begin{table}[!htpb]
+		\centering
+		\caption{实验环境}
+		\label{tab:env}
+		\begin{tabular}{|c|c|}
+			\hline
+			操作系统&Arch Linux\\
+			\hline
+			CPU&AMD Ryzen 5 2500U\\
+			\hline
+			内存&6.8GiB\\
+			\hline
+			系统内核&Linux 5.1.5\\
+			\hline
+			Python 版本&3.7.3\\
+			\hline
+		\end{tabular}
+	\end{table}
+
+	下文将控制实验变量：训练集大小，是否使用禁用词表，来计算出准确率（Accuracy）、精确率（Precision）和召回率（Recall），以衡量算法性能。
+	
+	以垃圾邮件为正例，我们得到：
+	
+	\begin{enumerate}
+		\item 真正例 (TP)：垃圾邮件被分类为垃圾邮件的数量
+		\item 假正例 (FP)：合法邮件被分类为垃圾邮件的数量
+		\item 假负例 (FN)：垃圾邮件被分类为合法邮件的数量
+		\item 真负例 (TN)：合法邮件被分类为合法邮件的数量
+	\end{enumerate}
+
+	准确率代表分类后的邮件中被正确分类的邮件所占的百分比，为$Accuracy=\frac{TP+TN}{TP+FP+TN+FN}$。精确率代表被分类为垃圾邮件的邮件中正确分类的邮件所占的百分比，为$Precision=\frac{TP}{TP+FP}$。召回率指实际垃圾邮件中被正确分类的邮件所占的百分比，为$Recall=\frac{TP}{TP+FN}$。
+	
+	在测试中，采用了两个变量：训练集大小和是否启用停用词过滤，以比较不同情况下算法的性能。每组变量下运行十次测试，并取结果准确率、精确率、召回率的平均值，以避免偶然的误差问题。实验结果如表\ref{tab:stopwords-on-performance}和表\ref{tab:stopwords-off-performance}所示。
+	
+	\begin{table}[!htpb]
+		\centering
+		\zihao{5}
+		\caption{开启停用词过滤时不同训练集大小的算法性能}
+		\label{tab:stopwords-on-performance}
+		\begin{tabular}{|c|c|c|c|c|c|}
+			\hline
+			训练集大小&词集大小平均值&测试集大小&准确率平均值&精确率平均值&召回率平均值\\
+			\hline
+			10&908&20000&0.887855&0.885696&0.955441\\
+			\hline
+			50&3306&20000&0.924845&0.933098&0.956466\\
+			\hline
+			100&5178&20000&0.947379&0.945317&0.975438\\
+			\hline
+			500&14965&20000&0.954719&0.955003&0.976015\\
+			\hline
+			1000&23275&20000&0.955300&0.957949&0.974849\\
+			\hline
+			5000&54883&20000&0.952505&0.967649&0.961841\\
+			\hline
+			10000&76204&20000&0.965700&0.971803&0.975324\\
+			\hline
+			20000&104593&20000&0.968320&0.979485&0.976428\\
+			\hline
+			40000&141830&20000&0.971235&0.978030&0.977662\\
+			\hline
+		\end{tabular}
+	\end{table}
+
+	\begin{table}[!htpb]
+		\centering
+		\zihao{5}
+		\caption{关闭停用词过滤时不同训练集大小的算法性能}
+		\label{tab:stopwords-off-performance}
+		\begin{tabular}{|c|c|c|c|c|c|}
+			\hline
+			训练集大小&词集大小平均值&测试集大小&准确率平均值&精确率平均值&召回率平均值\\
+			\hline
+			10&1054&20000&0.869190&0.900778&0.915103\\
+			\hline
+			50&3701&20000&0.938640&0.947740&0.958458\\
+			\hline
+			100&6043&20000&0.941490&0.954756&0.955379\\
+			\hline
+			500&15460&20000&0.947824&0.960926&0.958371\\
+			\hline
+			1000&23826&20000&0.946430&0.966173&0.955392\\
+			\hline
+			5000&54093&20000&0.954619&0.967474&0.962501\\
+			\hline
+			10000&76413&20000&0.954750&0.968983&0.961193\\
+			\hline
+			20000&105827&20000&0.957215&0.970641&0.963235\\
+			\hline
+			40000&142781&20000&0.960180&0.972995&0.965485\\
+			\hline
+		\end{tabular}
+	\end{table}
+
+	将表\ref{tab:stopwords-on-performance}和表\ref{tab:stopwords-off-performance}的数据转换为折线图，可以更直观的看出数据之间的关系。
+	
+	\begin{figure}[H]
+		\centering
+		\begin{tikzpicture}
+		\begin{axis}[legend pos=outer north east, xlabel=训练集大小, ylabel=准确率平均值] 
+		\addplot+[smooth]                    % 设置绘图的类型是光滑线图
+		coordinates
+		{
+			(10, 0.887855) (50,0.924845) (100,0.947379)
+			(500,0.954719) (1000,0.955300) (5000, 0.952505)
+			(10000,0.965700)(20000,0.968320)(40000,0.971235)
+		};
+		\addplot+[smooth]                    % 设置绘图的类型是光滑线图
+		coordinates
+		{
+			(10, 0.869190) (50,0.938640) (100,0.941490)
+			(500,0.947824) (1000,0.946430) (5000, 0.954619)
+			(10000,0.954750)(20000,0.957215)(40000,0.960180)
+		};
+		\addlegendentry{开启停用词过滤-准确率平均值}
+		\addlegendentry{关闭停用词过滤-准确率平均值}
+		\end{axis}
+		\end{tikzpicture}
+	\caption{准确率变化折线图}	\label{fig:accuracy-axis}
+	\end{figure}
+
+	\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}
+	\begin{axis}[legend pos=outer north east, xlabel=训练集大小, ylabel=精确率平均值] 
+	\addplot+[smooth]                    % 设置绘图的类型是光滑线图
+	coordinates
+	{
+		(10, 0.885696) (50,0.933098) (100,0.945317)
+		(500,0.955003) (1000,0.957949) (5000, 0.967946)
+		(10000,0.975324)(20000,0.976428)(40000,0.977662)
+	};
+	\addplot+[smooth]                    % 设置绘图的类型是光滑线图
+	coordinates
+	{
+		(10, 0.900778) (50,0.947740) (100,0.954756)
+		(500,0.960926) (1000,0.966173) (5000, 0.967474)
+		(10000,0.968983)(20000,0.970641)(40000,0.972995)
+	};
+	\addlegendentry{开启停用词过滤-精确率平均值}
+	\addlegendentry{关闭停用词过滤-精确率平均值}
+	\end{axis}
+	\end{tikzpicture}
+	\caption{精确率变化折线图}\label{fig:precision-axis}
+\end{figure}
+
+	\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}
+	\begin{axis}[legend pos=outer north east, xlabel=训练集大小, ylabel=准确率平均值] 
+	\addplot+[smooth]                    % 设置绘图的类型是光滑线图
+	coordinates
+	{
+		(10, 0.955441) (50,0.956466) (100,0.975438)
+		(500,0.976015) (1000,0.974849) (5000, 0.961841)
+		(10000,0.975324)(20000,0.976428)(40000,0.977662)
+	};
+	\addplot+[smooth]                    % 设置绘图的类型是光滑线图
+	coordinates
+	{
+		(10, 0.915103) (50,0.958458) (100,0.955379)
+		(500,0.958371) (1000,0.955392) (5000, 0.962501)
+		(10000,0.961193)(20000,0.963235)(40000,0.965485)
+	};
+	\addlegendentry{开启停用词过滤-召回率平均值}
+	\addlegendentry{关闭停用词过滤-召回率平均值}
+	\end{axis}
+	\end{tikzpicture}
+	\caption{召回率变化折线图}\label{fig:recall-axis}
+\end{figure}
+
+	从图\ref{fig:accuracy-axis}、图\ref{fig:precision-axis}和图\ref{fig:recall-axis}中我们可以看出，随着训练集大小（即训练样本的数量）的增加，准确率、精准率和召回率的平均值都处于上升趋势，并逐渐趋于稳定。
+	
+	并且，比较开启停用词过滤和关闭停用词过滤之间的数值差别，我们可以发现，两者最终的准确率平均值、精确率平均值和召回率平均值都稳定在一个十分优秀的数值，但前者的数值往往总是大于后者的数值。同时结合表\ref{tab:stopwords-on-performance}和表\ref{tab:stopwords-off-performance}我们可以发现，关闭停用词过滤后的词集大小往往要大于开启停用词过滤后的词集大小，这会给系统带来些许时空上的开销。所以，停用词过滤是十分值得开启的。
+	
+	当开启了停用词过滤，训练集大小为 40000 时，准确率、精准率、召回率三者的平均值都到达了最高点，它们的值分别为 $0.971235$、$0.978030$和$0.977662$，可见该垃圾邮件过滤系统是十分有效的。
 
 \section*{总结}
 \addcontentsline{toc}{section}{总结}
-\zhlipsum[8-9]
+	本文基于朴素贝叶斯算法设计并实现了一种垃圾邮件过滤算法。实验证明该垃圾邮件过滤系统对中文垃圾邮件有着良好的过滤效果，可以泛应用在未来的垃圾邮件过滤系统中。并且，下一步还可以考虑结合多种过滤方法，从而进一步的提高过滤效果。
 
 \begin{thebibliography}{99}
   \addcontentsline{toc}{section}{参考文献}
   % 参考文献正文字体：宋体五号，多倍行距1.25，段前、段后均为0行。
   \linespread{1.25}\songti\zihao{5}
-  \bibitem{ref1}Russell, Stuart; Norvig, Peter. Artificial Intelligence: A Modern Approach 2nd. Prentice Hall. 2003 [1995]. ISBN 978-0137903955.
-  \bibitem{ref2}杨雷,曹翠玲,孙建国,张立国.改进的朴素贝叶斯算法在垃圾邮件过滤中的研究[J].通信学报,2017,38(04):140-148.
-  \bibitem{ref3}张培,纪鸿旭,李璐.基于朴素贝叶斯的中文垃圾邮件过滤[J].信息与电脑(理论版),2017(07):79-81.
-  \bibitem{ref4}马哲. 垃圾邮件过滤系统的研究与实现[D]. 浙江大学, 2005.
-  \bibitem{pkuseg}Xu Sun, Houfeng Wang, Wenjie Li. Fast Online Training with Frequency-Adaptive Learning Rates for Chinese Word Segmentation and New Word Detection. Proceedings of ACL. 253–262. 2012
+ \bibitem{ref1}Russell, Stuart; Norvig, Peter. Artificial Intelligence: A Modern Approach 2nd. Prentice Hall. 2003 [1995]. ISBN 978-0137903955.
+ \bibitem{ref2}杨雷,曹翠玲,孙建国,张立国.改进的朴素贝叶斯算法在垃圾邮件过滤中的研究[J].通信学报,2017,38(04):140-148.
+ \bibitem{ref3}张培,纪鸿旭,李璐.基于朴素贝叶斯的中文垃圾邮件过滤[J].信息与电脑(理论版),2017(07):79-81.
+ \bibitem{ref4}马哲. 垃圾邮件过滤系统的研究与实现[D]. 浙江大学, 2005.
+ \bibitem{pkuseg}Xu Sun, Houfeng Wang, Wenjie Li. Fast Online Training with Frequency-Adaptive Learning Rates for Chinese Word Segmentation and New Word Detection. Proceedings of ACL. 253–262. 2012
+ \bibitem{nlp}李航．统计学习方法．北京：清华大学出版社，2012
+ \bibitem{lihang}成庆 ．统计自然语言处理（第2版）．北京：清华大学出版社，2013
+ \bibitem{stopwords}化柏林	. 知识抽取中的停用词处理技术[J]. 现代图书情报技术, 2007, 2(8): 48-51.	
+ \bibitem{conmat}confusion matrix  ．wikipedia．2019-02-04
+ \bibitem{ref5}徐梦龙,黄家旺.朴素贝叶斯算法在垃圾邮件过滤方面的应用[J].网络安全技术与应用,2018(07):46-47.
+ \bibitem{ref6}曹翠玲,王媛媛,袁野,赵国冬.用于垃圾邮件的贝叶斯过滤算法研究[J].网络与信息安全学报,2017,3(03):64-70.
+ \bibitem{ref7}刘秋阳,林泽锋,栾青青.基于朴素贝叶斯算法的垃圾短信智能识别系统[J].电脑知识与技术,2016,12(12):190-192.
+ \bibitem{ref8}张东亮,董礼.基于改进的朴素贝叶斯算法在垃圾短信过滤中的研究[J].计算机测量与控制,2012,20(02):526-528+551.
+ \bibitem{ref9}周修考.基于朴素贝叶斯算法的中文垃圾邮件过滤器的设计与应用[J].兰州工业高等专科学校学报,2010,17(06):5-7.
+ \bibitem{ref10}郑炜,沈文,张英鹏.基于改进朴素贝叶斯算法的垃圾邮件过滤器的研究[J].西北工业大学学报,2010,28(04):622-627.
+ \bibitem{ref11}翟军昌.基于朴素贝叶斯算法的个性化垃圾邮件过滤[J].长春师范学院学报(自然科学版),2009,28(04):17-20.
+ \bibitem{ref12}杨杉,何跃,颜锦江.基于贝叶斯的反垃圾邮件技术探讨[J].网络安全技术与应用,2007(08):54-56.
+ \bibitem{ref13}刘宏伟,黄静.基于朴素贝叶斯算法的垃圾邮件网关[J].微计算机信息,2006(18):73-75+69.
+ \bibitem{ref14}AFZAL H, MEHMOOD K. Spam filtering of bi-lingual tweets using machine learning[C]//The 18th International Conference on Advanced Communication Technology. 2016: 710- 714.
 \end{thebibliography}
 
 \section*{致谢}
 \addcontentsline{toc}{section}{致谢}
 	通过一阶段的努力，我的毕业设计《基于朴素贝叶斯的垃圾邮件过滤算法》终于完成了，这意味着大学生活即将结束。
-	首先，我要感谢我的导师徐晶老师，他严谨细致、一丝不苟的作风一直是我学习中的榜样，给我起到了指明灯的作用。尽管事务繁忙，陈老师仍然在我彷徨和困惑的时候给与了及时的帮助和指导。在本论文的写作过程中，陈老师倾注了大量的心血，从开题报告到毕业论文的撰写，从写作提纲到一遍又一遍的指出稿中的具体问题，严格把关，循循善诱，在此我表示衷心感谢。同时，感谢所有任课老师和所有同学在这四年来给自己的指导和帮助，是他们教会了我专业知识，教会了我如何学习，教会了我如何做人。正是由于他们，我才能在各方面取得显著的进步，感谢计算机学院的所有同学，给我创造了一个团结进取，充满温暖，充满爱的大集体，使我快乐而且充实地渡过了人生中最美好的大学时光。
+	首先，我要感谢我的导师徐晶老师，他严谨细致、一丝不苟的作风一直是我学习中的榜样，给我起到了指明灯的作用。尽管事务繁忙，徐老师仍然在我彷徨和困惑的时候给与了及时的帮助和指导。在本论文的写作过程中，徐老师倾注了大量的心血，从开题报告到毕业论文的撰写，从写作提纲到一遍又一遍的指出稿中的具体问题，严格把关，循循善诱，在此我表示衷心感谢。同时，感谢所有任课老师和所有同学在这四年来给自己的指导和帮助，是他们教会了我专业知识，教会了我如何学习，教会了我如何做人。正是由于他们，我才能在各方面取得显著的进步，感谢计算机学院的所有同学，给我创造了一个团结进取，充满温暖，充满爱的大集体，使我快乐而且充实地渡过了人生中最美好的大学时光。
 	
 	感谢我的同窗们，正是有了互相帮助一起学习的日子，才让我的大学多姿多彩。
 
 \appendix
 \section{附录}
-\zhlipsum*[10]
+\begin{python}
+#requirements.txt 项目依赖
+Click==7.0
+cycler==0.10.0
+Flask==1.0.2
+Flask-Cors==3.0.7
+gevent==1.4.0
+greenlet==0.4.15
+gunicorn==19.9.0
+imageio==2.5.0
+itsdangerous==1.1.0
+Jinja2==2.10.1
+kiwisolver==1.1.0
+MarkupSafe==1.1.1
+matplotlib==3.0.3
+numpy==1.16.3
+pandas==0.24.2
+Pillow==6.0.0
+pkuseg==0.0.21
+pyparsing==2.4.0
+python-dateutil==2.8.0
+pytz==2019.1
+scipy==1.2.1
+six==1.12.0
+tqdm==4.31.1
+Werkzeug==0.15.2
+wordcloud==1.5.0
+\end{python}
+
+
+\begin{python}
+"""
+preprocess.py
+预处理模块
+多进程分词 trec06 数据集
+"""
+import glob
+import pkuseg
+import re
+import pandas
+import threading
+from queue import Queue
+import os
+import click
+from mail import *
+from tqdm import tqdm
+
+segmentation = pkuseg.pkuseg()
+
+
+class Worker(threading.Thread):
+    """
+    消费者，分词数据集，并存入 MySQL
+    """
+
+    def __init__(self, queue, stop_words, spam_dir, ham_dir, thread_num):
+        threading.Thread.__init__(self)
+        self.queue = queue
+        self.stop_words = stop_words
+        self.spam_dir = spam_dir
+        self.ham_dir = ham_dir
+        self.thread_num = thread_num
+
+    def run(self) -> None:
+        print('starting worker thread', self.thread_num)
+        while True:
+            path, spam = self.queue.get()
+            if path is None and spam is None:
+                break
+            try:
+                output_filename = '{}{}.txt'.format(path.split('/')[-2], path.split('/')[-1])
+                output_file_path = os.path.join(self.spam_dir if spam else self.ham_dir, output_filename)
+                if os.path.exists(output_file_path):
+                    continue
+                mail_content = get_mail_content(path)
+                # 跳过内容为空的邮件
+                if len(mail_content) == 0:
+                    continue
+                word_list = create_string_word_list(mail_content, self.stop_words)
+                # 跳过去掉禁用词后内容为空的邮件
+                if len(word_list) == 0:
+                    continue
+                output_text = ','.join(word_list)
+                with open(output_file_path, 'w', encoding='utf-8') as f:
+                    f.write(output_text)
+            except Exception as e:
+                print(path, e)
+
+
+class Producer(threading.Thread):
+    """
+    生产者，读取 full/index 文件并发送给消费者
+    """
+
+    def __init__(self, queue, index, worker_num):
+        threading.Thread.__init__(self)
+        self.queue = queue
+        self.index = index
+        self.worker_num = worker_num
+
+    def run(self) -> None:
+        print("starting producer thread, total:", len(self.index))
+        pbar = tqdm(total=len(self.index))  # CLI 进度条
+        pcount = 0  # 进度条统计
+        for i, row in self.index.iterrows():
+            self.queue.put((row.path, row.spam))
+            pcount += 1
+            if pcount == 100:
+                pbar.update(pcount)
+                pcount = 0
+        pbar.update(pcount)
+        pbar.close()
+        print('done')
+        for i in range(self.worker_num):
+            self.queue.put((None, None))
+
+
+def load_stop_words(file_glob):
+    """
+    加载停用词列表
+    """
+    stop_words = set()
+    for path in glob.glob(file_glob):
+        with open(path, 'r') as f:
+            lines = f.readlines()
+        stop_words |= set([i.strip() for i in lines])
+    return stop_words
+
+
+def create_string_word_list(string, stop_words, seg=segmentation):
+    """
+    根据文本内容，创建这条文本的词表
+    :param string: 字符串
+    :param stop_words: 停用词列表
+    :param seg: 分词器，如果为 None 则用全局实例
+    :return
+    """
+    # 去除非中文字符
+    string = re.findall(u'[\u4E00-\u9FD5]', string)
+    string = ''.join(string)
+
+    word_list = []
+    # pkuseg 分词
+    seg_list = seg.cut(string)
+    for word in seg_list:
+        if word != '' and len(word) != 0 and word not in stop_words:
+            word_list.append(word)
+    return word_list
+
+
+def get_index(trec06c_path):
+    index = pandas.read_csv(os.path.join(trec06c_path, 'full/index'), sep=' ', names=['spam', 'path'])
+    index.path = index.path.apply(lambda x: os.path.join(trec06c_path, x[1:]))
+    index.spam = index.spam.apply(lambda x: True if x == 'spam' else False)
+    return index
+
+
+def make_data_dir(target_dir):
+    spam_dir, ham_dir = os.path.join(target_dir, 'spam'), os.path.join(target_dir, 'ham')
+    if not os.path.exists(spam_dir):
+        os.makedirs(spam_dir)
+        os.makedirs(ham_dir)
+    return spam_dir, ham_dir
+
+
+@click.command()
+@click.option('-t', 'trec06c_path', default='./trec06c', help='trec06 数据集根路径，default ./trec06c')
+@click.option('-s', 'stopwords_glob', default='./stopwords/*.txt', help='禁用词表 GLOB，default ./stopwords/*.txt')
+@click.option('-T', 'target_dir', default='./data', help='输出文件目标目录，default ./data')
+@click.option('-n', 'worker_num', default=4, help='消费者进程数，default 4')
+def run(trec06c_path, stopwords_glob, target_dir, worker_num):
+    queue = Queue(worker_num * 4)
+    if len(stopwords_glob) == 0:
+        stop_words = set()
+    else:
+        stop_words = load_stop_words(stopwords_glob)
+    print(stop_words)
+    print('禁用词表加载成功，长度', len(stop_words))
+    index = get_index(trec06c_path)
+    spam_dir, ham_dir = make_data_dir(target_dir)
+
+    threads = list()
+    producer = Producer(queue, index, worker_num)
+    producer.start()
+    threads.append(producer)
+    for i in range(worker_num):
+        worker = Worker(queue, stop_words, spam_dir, ham_dir, i)
+        worker.start()
+        threads.append(worker)
+
+    for thread in threads:
+        thread.join()
+
+
+if __name__ == '__main__':
+    run()
+\end{python}
+
+\begin{python}
+"""
+train.py
+训练模块
+"""
+import os
+import random
+import numpy
+import click
+import gc
+from scipy.sparse import lil_matrix, coo_matrix
+from tqdm import tqdm
+from datetime import datetime
+import pickle
+
+
+class Model:
+    def __init__(self, word_set, Pspam, Pham, PS, PH, created_at):
+        self.word_set = word_set
+        self.Pspam = Pspam
+        self.Pham = Pham
+        self.PS = PS
+        self.PH = PH
+        self.created_at: datetime = created_at
+
+
+def load_dataset(data_dir, ratio=1.0, dataset_pickle_filepath=''):
+    """
+    读取数据集，随机打乱
+    :param data_dir:                经过 preprocess.py 处理过的输出目录路径
+    :param ratio:                   读取百分比
+    :param dataset_pickle_filepath: 数据集 pickle 文件路径，留空则不会生成/读取
+    :return dataset:                示例 [(1, ['哈哈', '呵呵'])...]，1 代表 spam 0 代表 ham
+    """
+    dataset = list()
+    # 可选使用 pickle 文件加快数据集读取速度
+    if len(dataset_pickle_filepath) != 0 and os.path.exists(dataset_pickle_filepath):
+        print('发现数据集 pickle 文件')
+        with open(dataset_pickle_filepath, 'rb') as f:
+            dataset = pickle.load(f)
+    else:
+        labels = os.listdir(data_dir)
+        for label in labels:
+            label_dir = os.path.join(data_dir, label)
+            filenames = os.listdir(label_dir)
+            print('开始读取{}'.format(label))
+            # CLI 进度条
+            pbar = tqdm(total=len(filenames))
+            # 进度条计数，满 100 更新一次进度条
+            pcount = 0
+            for filename in filenames:
+                file_path = os.path.join(label_dir, filename)
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    raw_text = f.read()
+                words = raw_text.split(',')
+                dataset.append((1 if label == 'spam' else 0, words))
+                pcount += 1
+                if pcount == 100:
+                    pbar.update(pcount)
+                    pcount = 0
+            pbar.update(pcount)
+            pbar.close()
+        if len(dataset_pickle_filepath) != 0:
+            with open(dataset_pickle_filepath, 'wb') as f:
+                pickle.dump(dataset, f)
+                print('生成 pickle 文件成功：', dataset_pickle_filepath)
+    random.shuffle(dataset)
+    dataset = dataset[:int(len(dataset) * ratio)]
+    return dataset
+
+
+def create_word_set(dataset):
+    """
+    创建不含重复词的词集
+    :param dataset:
+    :return:
+    """
+    word_set = set()
+    for label, words in dataset:
+        word_set |= set(words)
+    return list(word_set)
+
+
+def words2vector(word_set, words, word_dict=None):
+    if word_dict is None:
+        word_dict = {word: i for i, word in enumerate(word_set)}
+    vector = numpy.zeros(len(word_set), dtype=numpy.uint8)
+    for word in words:
+        if word in word_set:
+            vector[word_dict[word]] = 1
+    return vector
+
+
+def dataset2vectors(word_set, dataset):
+    """
+    将数据集转化为词向量
+    :param word_set: 由 create_word_set 得到的不含重复词的词集
+    :param dataset:  数据集
+    :return:
+        vectors:
+        labels:
+    """
+    # word_dict 的对应关系为 词 -> 该词的位置
+    word_dict = {word: i for i, word in enumerate(word_set)}
+    gc.collect()
+    # vector 的总数（vectors 的长度）等于邮件集的数量
+    # vector 的长度为词集的长度
+    # vector 的元素值有两种：1 代表词集中该位置的词在本邮件中出现了，0 则相反
+    # 使用稀疏矩阵解决内存不足的问题
+    vectors = lil_matrix((len(dataset), len(word_set)), dtype=numpy.uint8)
+    # vectors = numpy.zeros((len(dataset), len(word_set)), dtype='float64')
+    # labels 的长度为邮件集的数量
+    # labels 的元素值有两种：1 代表该位置的邮件为垃圾邮件，0 则为正常邮件
+    labels = numpy.zeros(len(dataset), dtype=numpy.uint8)
+    # CLI 进度条
+    pbar = tqdm(total=len(dataset))
+    # 进度条计数，满 100 更新一次进度条
+    pcount = 0
+    for i, (label, words) in enumerate(dataset):
+        for word in words:
+            if word in word_dict:
+                vectors[i, word_dict[word]] = 1
+        labels[i] = label
+        pcount += 1
+        if pcount == 100:
+            pbar.update(pcount)
+            pcount = 0
+    pbar.update(pcount)
+    pbar.close()
+    return vectors, labels
+
+
+def train_nb(vectors, labels, word_set=None):
+    """
+    训练模型
+    :param vectors:
+    :param labels:
+    :return:
+        Pspam: P(是垃圾邮件)
+        Pham:  P(是正常邮件)
+        PS: P(是垃圾邮件|出现该词) 的矩阵
+        PH: P(是正常邮件|出现该词) 的矩阵
+    """
+    Pspam = sum(labels) / labels.shape[0]  # 垃圾邮件概率
+    Pham = 1 - Pspam  # 非垃圾邮件概率
+    gc.collect()
+    # 这里要用拉普拉斯平滑
+    SN = numpy.ones(vectors.shape[1], dtype=numpy.float64)
+    HN = numpy.ones(vectors.shape[1], dtype=numpy.float64)
+    coo_vectors = coo_matrix(vectors)
+    # CLI 进度条
+    pbar = tqdm(total=sum(coo_vectors.data))
+    # 进度条计数，满 100 更新一次进度条
+    pcount = 0
+    for i, j, v in zip(coo_vectors.row, coo_vectors.col, coo_vectors.data):
+        # 如果是垃圾邮件
+        if labels[i] == 1:
+            SN[j] += v
+        else:
+            HN[j] += v
+        pcount += 1
+        if pcount == 100:
+            pbar.update(pcount)
+            pcount = 0
+    pbar.update(pcount)
+    pbar.close()
+    PS = SN / sum(SN)
+    PH = HN / sum(HN)
+    return Pspam, Pham, PS, PH
+
+
+def predict_nb(vectors, Pspam, Pham, PS, PH, show_progress_bar=True):
+    """
+    判断垃圾/正常邮件
+    :param vectors:         需要判断的邮件集的词向量矩阵
+    :param Pspam:           P(是垃圾邮件)
+    :param Pham:            P(是正常邮件)
+    :param PS:              P(是垃圾邮件|出现该词) 的矩阵
+    :param PH:              P(是正常邮件|出现该词) 的矩阵
+    :return predict_vector: 预测结果矩阵，1 代表该位置的邮件为垃圾邮件，0 则正常
+    """
+    # log 防止小数溢出
+    Pspam, Pham = numpy.math.log(Pspam), numpy.math.log(Pham)
+    PS, PH = numpy.log(PS), numpy.log(PH)
+    predict_vector = numpy.zeros(vectors.shape[0], dtype=numpy.uint8)
+    probalities = list()
+    if show_progress_bar:
+        # CLI 进度条
+        pbar = tqdm(total=vectors.shape[0])
+        # 进度条计数，满 100 更新一次进度条
+        pcount = 0
+    for i, vector in enumerate(vectors):
+        pspam = Pspam + sum(vector * PS)
+        pham = Pham + sum(vector * PH)
+        if pspam > pham:
+            predict_vector[i] = 1
+        if show_progress_bar:
+            pcount += 1
+            if pcount == 100:
+                pbar.update(pcount)
+                pcount = 0
+        probalities.append((pspam, pham))
+    if show_progress_bar:
+        pbar.update(pcount)
+        pbar.close()
+    # predict_vector = [1 if (Pspam + sum(vector * PS)) >= (Pham + sum(vector * PH)) else 0 for vector in vectors]
+    return predict_vector, probalities
+
+
+def split_vectors_by_ratio(vectors, labels, train_size, test_size):
+    """
+    按照一定的比例切分向量
+    :param vectors:
+    :param labels:
+    :param train_size:   训练集大小
+    :param test_size:   测试集大小
+    :return:
+    """
+    train_num = int(vectors.shape[0] * train_size)
+    train_vectors = vectors[:train_size]
+    train_labels = labels[:train_size]
+    test_vectors = vectors[train_size:train_size + test_size]
+    test_labels = labels[train_size:train_size + test_size]
+    return train_vectors, train_labels, test_vectors, test_labels
+
+
+def calc_accuracy(predicts, labels):
+    """
+    计算准确率
+    :param predicts:
+    :param labels:
+    :return:
+    """
+    return numpy.mean(predicts == labels)
+
+
+def calc_precision(predicts, labels):
+    """
+    计算精确率
+    :param predicts:
+    :param labels:
+    :return:
+    """
+    tp = 0
+    for i in range(predicts.shape[0]):
+        if predicts[i] == labels[i] == 1:
+            tp += 1
+    return tp / sum(predicts)
+
+
+def calc_recall(predicts, labels):
+    """
+    计算召回率
+    :param predicts:
+    :param labels:
+    :return:
+    """
+    tp = 0
+    for i in range(predicts.shape[0]):
+        if predicts[i] == labels[i] == 1:
+            tp += 1
+    return tp / sum(labels)
+
+
+def run(train_size, test_size, dataset_pickle_filepath, output_pickle_filepath):
+    dataset = load_dataset('./data', 1, dataset_pickle_filepath)
+    dataset = dataset[:train_size + test_size]
+    train_dataset = dataset[:train_size]
+    test_dataset = dataset[train_size:]
+    print('数据集读取成功，总数 {}'.format(len(dataset)))
+    word_set = create_word_set(train_dataset)
+    print('词集创建成功，长度', len(word_set), '，开始创建词向量')
+    train_vectors, train_labels = dataset2vectors(word_set, train_dataset)
+    test_vectors, test_labels = dataset2vectors(word_set, test_dataset)
+    print('词向量创建成功')
+    # train_vectors, train_labels, test_vectors, test_labels = split_vectors_by_ratio(vectors, labels, train_size, test_size)
+    print('数据集切分成功，训练集长度 {}×{}，测试集长度 {}×{}'.format(train_vectors.shape[0],train_vectors.shape[1],test_vectors.shape[0],test_vectors.shape[1]))
+    print('开始训练，训练集长度 {}×{}'.format(train_vectors.shape[0], train_vectors.shape[1]))
+    Pspam, Pham, PS, PH = train_nb(train_vectors, train_labels, word_set)
+    print('开始测试，测试集长度 {}×{}'.format(test_vectors.shape[0], test_vectors.shape[1]))
+    predict_vector, probabilities = predict_nb(test_vectors, Pspam, Pham, PS, PH)
+    accuracy = calc_accuracy(predict_vector, test_labels)
+    precision = calc_precision(predict_vector, test_labels)
+    recall = calc_recall(predict_vector, test_labels)
+    print('测试完成，准确率 {}，精确率 {}，召回率 {}%'.format(accuracy, precision, recall))
+
+    # 防止 __main__.Model 问题
+    # https://stackoverflow.com/questions/40287657/load-pickled-object-in-different-file-attribute-error
+    from train import Model
+    output = Model(word_set, Pspam, Pham, PS, PH, datetime.now())
+    with open(output_pickle_filepath, 'wb') as f:
+        pickle.dump(output, f)
+    return word_set, accuracy, precision, recall
+
+
+@click.command()
+@click.option('-t', 'train_size', default=40000, help='训练集集大小，default 40000')
+@click.option('-T', 'test_size', default=20000, help='测试集大小, default 20000')
+@click.option('-d', 'dataset_pickle_filepath', default='',
+              help='dataset pickle 文件路径，程序在读取数据集时会自动生成/读取 pickle 文件以加快读取速度，default \'\'')
+@click.option('-o', 'output_pickle_filepath', default='model.pickle',
+              help='输出 pickle 路径，{word_set, Pspam, Pham, PS, PH}, default \'model.pickle\'')
+# @click.option('-f', 'float_precision', default=16, help='浮点数精度，available16 32 64，default 16')
+def main(train_size, test_size, dataset_pickle_filepath, output_pickle_filepath):
+    run(train_size, test_size, dataset_pickle_filepath, output_pickle_filepath)
+
+
+if __name__ == '__main__':
+    main()
+\end{python}
+
+\begin{python}
+"""
+web.py
+分类模块，Web 后端
+"""
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+from imageio import imread
+from wordcloud import WordCloud
+from train import *
+from preprocess import *
+from web_config import config
+
+app = Flask(__name__, static_folder='./static')
+CORS(app)  # allow CORS for all domains on all routes
+model: Model
+chinese_font_path: str
+stop_words: set
+
+
+def load_model(model_pickle_filepath):
+    with open(model_pickle_filepath, 'rb') as f:
+        return pickle.load(f)
+
+
+def setup_app(app: Flask):
+    """
+    进行一些初始化工作
+    :param app:
+    :return:
+    """
+    app.debug = config['debug']
+    global model, chinese_font_path, stop_words
+    model = load_model(config['model_pickle_filepath'])
+    model.word_dict = {word: i for i, word in enumerate(model.word_set)}
+    chinese_font_path = config['zh_font_filepath']
+    stop_words = load_stop_words(config['stopwords_file_glob'])
+
+
+setup_app(app)
+
+
+def api_response(success=True, data={}, code=0, message=''):
+    return {
+        'success': success,
+        'data': data,
+        'code': code,
+        'message': message
+    }
+
+
+@app.route('/')
+def index():
+    return 'Hello World'
+
+
+@app.route('/wordcloud/spam')
+def spam_word_cloud():
+    """
+    垃圾邮件词云
+    :return:
+    """
+    created_at = model.created_at
+    filename = 'spam_wordcloud{}{}{}{}{}.png'.format(created_at.year, created_at.month, created_at.day, created_at.hour,
+                                                     created_at.minute)
+    filepath = os.path.join('./static/images', filename)
+    if not os.path.exists(filepath):
+        word_set = model.word_set
+        PS = model.PS
+        word_dict = {word: ps for word, ps in zip(word_set, PS)}
+        image_mask = imread('./static/images/MailIcon.jpg')
+        wc: WordCloud = WordCloud(font_path=chinese_font_path, mask=image_mask,max_words=2000).generate_from_frequencies(word_dict)
+        wc.to_file(filepath)
+    return app.send_static_file(os.path.join('images', filename))
+
+
+@app.route('/wordcloud/ham')
+def ham_word_cloud():
+    """
+    正常邮件词云
+    :return:
+    """
+    created_at = model.created_at
+    filename = 'ham_wordcloud{}{}{}{}{}.png'.format(created_at.year, created_at.month, created_at.day, created_at.hour,
+                                                    created_at.minute)
+    filepath = os.path.join('./static/images', filename)
+    if not os.path.exists(filepath):
+        word_set = model.word_set
+        PH = model.PH
+        word_dict = {word: ps for word, ps in zip(word_set, PH)}
+        image_mask = imread('./static/images/MailIcon.jpg')
+        wc = WordCloud(font_path=chinese_font_path, mask=image_mask, max_words=2000).generate_from_frequencies(
+            word_dict)
+        wc.to_file(filepath)
+    return app.send_static_file(os.path.join('images', filename))
+
+
+@app.route('/identify', methods=['POST'])
+def identify_mail():
+    """
+    判断邮件为垃圾邮件还是正常邮件
+    POST /identify
+    {
+        "content": "邮件正文"
+    }
+    :return:
+    {
+        "success": true,
+        "data": {
+            "type": "spam",  // 或者 ham
+            "warnMessage": "结果可能不正确：..."  // 当分词得到的词过少时会携带警告信息
+        }
+        message: ''
+    }
+    """
+    data = request.get_json()
+    content = data['content']
+    if len(content) == 0:
+        return jsonify(api_response(success=False, message='内容为空'))
+    words = create_string_word_list(content, stop_words)
+    vector = words2vector(model.word_set, words, model.word_dict)
+    vectors = numpy.zeros((1, vector.shape[0]), dtype=numpy.uint8)
+    vectors[0] = vector
+    results, probabilities = predict_nb(vectors, model.Pspam, model.Pham, model.PS, model.PH, show_progress_bar=False)
+    pspam, pham = probabilities[0]
+    ret_data = {'type': 'spam' if results[0] == 1 else 'ham', "pspam": pspam, "pham": pham}
+    if len(set(words)) < 20:
+        ret_data['warnMessage'] = '结果可能不正确：分词并去重后仅得到{}个词'.format(len(set(words)))
+    return jsonify(api_response(data=ret_data))
+
+
+@app.route('/stat')
+def stat():
+    return jsonify(api_response(data={
+        "wordSetCount": len(model.word_set),
+        "stopWordsCount": len(stop_words),
+        "Pspam": model.Pspam,
+        "Pham": model.Pham,
+    }))
+
+
+@app.route('/stat/wordset')
+def word_set():
+    return jsonify(model.word_set)
+
+
+@app.route('/stat/stopwords')
+def stopwords():
+    return jsonify(list(stop_words))
+
+
+@app.route('/stat/PS')
+def PS():
+    return jsonify(model.PS.tolist())
+
+
+@app.route('/stat/PH')
+def PH():
+    return jsonify(model.PH.tolist())
+
+
+if __name__ == '__main__':
+    app.run(host=config['host'], port=config['port'], debug=config['debug'])
+\end{python}
+
+\begin{python}
+"""
+测试模块
+"""
+import click
+import numpy
+from train import run
+
+
+@click.command()
+@click.option('-t', 'train_size', default=40000, help='训练集集大小，default 40000')
+@click.option('-T', 'test_size', default=20000, help='测试集大小, default 20000')
+@click.option('-n', 'run_times', default=10)
+def main(train_size, test_size, run_times):
+    word_set_length_vec = numpy.zeros(run_times, dtype=numpy.float64)
+    accuracy_vec = numpy.zeros(run_times, dtype=numpy.float64)
+    precision_vec = numpy.zeros(run_times, dtype=numpy.float64)
+    recall_vec = numpy.zeros(run_times, dtype=numpy.float64)
+    for i in range(run_times):
+        print('====第{}次运行'.format(i + 1))
+        word_set, accuracy, precision, recall = run(train_size, test_size, './dataset.pickle', '.model.pickle')
+        word_set_length_vec[i], accuracy_vec[i], precision_vec[i], recall_vec[i] = len(
+            word_set), accuracy, precision, recall
+    word_set_length_mean = numpy.mean(word_set_length_vec)
+    accuracy_mean = numpy.mean(accuracy_vec)
+    precision_mean = numpy.mean(precision_vec)
+    recall_mean = numpy.mean(recall_vec)
+    print('训练集大小 {}，测试集大小 {}，运行 {} 次平均值词集长度 {}，准确率 {}，精确率 {}，召回率 {}'.format(train_size, test_size, run_times,word_set_length_mean, accuracy_mean,precision_mean, recall_mean))
+
+
+if __name__ == '__main__':
+    main()
+\end{python}
+
 \end{document}

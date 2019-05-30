@@ -1,3 +1,7 @@
+"""
+train.py
+训练模块
+"""
 import os
 import random
 import numpy
@@ -125,7 +129,7 @@ def dataset2vectors(word_set, dataset):
     return vectors, labels
 
 
-def trainNB(vectors, labels):
+def train_nb(vectors, labels, word_set=None):
     """
     训练模型
     :param vectors:
@@ -164,7 +168,7 @@ def trainNB(vectors, labels):
     return Pspam, Pham, PS, PH
 
 
-def predictNB(vectors, Pspam, Pham, PS, PH, show_progress_bar=True):
+def predict_nb(vectors, Pspam, Pham, PS, PH, show_progress_bar=True):
     """
     判断垃圾/正常邮件
     :param vectors:         需要判断的邮件集的词向量矩阵
@@ -202,46 +206,83 @@ def predictNB(vectors, Pspam, Pham, PS, PH, show_progress_bar=True):
     return predict_vector, probalities
 
 
-def split_vectors_by_ratio(vectors, labels, ratio=0.67):
+def split_vectors_by_ratio(vectors, labels, train_size, test_size):
     """
     按照一定的比例切分向量
     :param vectors:
     :param labels:
-    :param ratio:   切分比例
+    :param train_size:   训练集大小
+    :param test_size:   测试集大小
     :return:
     """
-    train_num = int(vectors.shape[0] * ratio)
-    train_vectors = vectors[:train_num]
-    train_labels = labels[:train_num]
-    test_vectors = vectors[train_num:]
-    test_labels = labels[train_num:]
+    train_num = int(vectors.shape[0] * train_size)
+    train_vectors = vectors[:train_size]
+    train_labels = labels[:train_size]
+    test_vectors = vectors[train_size:train_size + test_size]
+    test_labels = labels[train_size:train_size + test_size]
     return train_vectors, train_labels, test_vectors, test_labels
 
 
-@click.command()
-@click.option('-r', 'dataset_ratio', default=1.0, help='读取数据集比例，default 1.0')
-@click.option('-t', 'train_ratio', default=0.67, help='训练集集比例，default 0.67')
-@click.option('-d', 'dataset_pickle_filepath', default='',
-              help='dataset pickle 文件路径，程序在读取数据集时会自动生成/读取 pickle 文件以加快读取速度，default \'\'')
-@click.option('-o', 'output_pickle_filepath', default='model.pickle',
-              help='输出 pickle 路径，{word_set, Pspam, Pham, PS, PH}, default \'model.pickle\'')
-# @click.option('-f', 'float_precision', default=16, help='浮点数精度，available16 32 64，default 16')
-def main(dataset_ratio, train_ratio, dataset_pickle_filepath, output_pickle_filepath):
-    dataset = load_dataset('./data', dataset_ratio, dataset_pickle_filepath)
-    print('数据集读取成功，比例 {} ,总数 {}'.format(dataset_ratio, len(dataset)))
-    word_set = create_word_set(dataset)
+def calc_accuracy(predicts, labels):
+    """
+    计算准确率
+    :param predicts:
+    :param labels:
+    :return:
+    """
+    return numpy.mean(predicts == labels)
+
+
+def calc_precision(predicts, labels):
+    """
+    计算精确率
+    :param predicts:
+    :param labels:
+    :return:
+    """
+    tp = 0
+    for i in range(predicts.shape[0]):
+        if predicts[i] == labels[i] == 1:
+            tp += 1
+    return tp / sum(predicts)
+
+
+def calc_recall(predicts, labels):
+    """
+    计算召回率
+    :param predicts:
+    :param labels:
+    :return:
+    """
+    tp = 0
+    for i in range(predicts.shape[0]):
+        if predicts[i] == labels[i] == 1:
+            tp += 1
+    return tp / sum(labels)
+
+
+def run(train_size, test_size, dataset_pickle_filepath, output_pickle_filepath):
+    dataset = load_dataset('./data', 1, dataset_pickle_filepath)
+    dataset = dataset[:train_size + test_size]
+    train_dataset = dataset[:train_size]
+    test_dataset = dataset[train_size:]
+    print('数据集读取成功，总数 {}'.format(len(dataset)))
+    word_set = create_word_set(train_dataset)
     print('词集创建成功，长度', len(word_set), '，开始创建词向量')
-    vectors, labels = dataset2vectors(word_set, dataset)
+    train_vectors, train_labels = dataset2vectors(word_set, train_dataset)
+    test_vectors, test_labels = dataset2vectors(word_set, test_dataset)
     print('词向量创建成功')
-    train_vectors, train_labels, test_vectors, test_labels = split_vectors_by_ratio(vectors, labels, train_ratio)
-    print('数据集切分成功，ratio {}，训练集长度 {}×{}，测试集长度 {}×{}'.format(train_ratio, train_vectors.shape[0], train_vectors.shape[1],
-                                                            test_vectors.shape[0], test_vectors.shape[1]))
+    # train_vectors, train_labels, test_vectors, test_labels = split_vectors_by_ratio(vectors, labels, train_size, test_size)
+    print('数据集切分成功，训练集长度 {}×{}，测试集长度 {}×{}'.format(train_vectors.shape[0], train_vectors.shape[1],
+                                                   test_vectors.shape[0], test_vectors.shape[1]))
     print('开始训练，训练集长度 {}×{}'.format(train_vectors.shape[0], train_vectors.shape[1]))
-    Pspam, Pham, PS, PH = trainNB(train_vectors, train_labels)
+    Pspam, Pham, PS, PH = train_nb(train_vectors, train_labels, word_set)
     print('开始测试，测试集长度 {}×{}'.format(test_vectors.shape[0], test_vectors.shape[1]))
-    predict_vector, probabilities = predictNB(test_vectors, Pspam, Pham, PS, PH)
-    accuary = numpy.mean(predict_vector == test_labels)
-    print('测试完成，准确率 {}%'.format(accuary * 100))
+    predict_vector, probabilities = predict_nb(test_vectors, Pspam, Pham, PS, PH)
+    accuracy = calc_accuracy(predict_vector, test_labels)
+    precision = calc_precision(predict_vector, test_labels)
+    recall = calc_recall(predict_vector, test_labels)
+    print('测试完成，准确率 {}，精确率 {}，召回率 {}%'.format(accuracy, precision, recall))
 
     # 防止 __main__.Model 问题
     # https://stackoverflow.com/questions/40287657/load-pickled-object-in-different-file-attribute-error
@@ -249,6 +290,19 @@ def main(dataset_ratio, train_ratio, dataset_pickle_filepath, output_pickle_file
     output = Model(word_set, Pspam, Pham, PS, PH, datetime.now())
     with open(output_pickle_filepath, 'wb') as f:
         pickle.dump(output, f)
+    return word_set, accuracy, precision, recall
+
+
+@click.command()
+@click.option('-t', 'train_size', default=40000, help='训练集集大小，default 40000')
+@click.option('-T', 'test_size', default=20000, help='测试集大小, default 20000')
+@click.option('-d', 'dataset_pickle_filepath', default='',
+              help='dataset pickle 文件路径，程序在读取数据集时会自动生成/读取 pickle 文件以加快读取速度，default \'\'')
+@click.option('-o', 'output_pickle_filepath', default='model.pickle',
+              help='输出 pickle 路径，{word_set, Pspam, Pham, PS, PH}, default \'model.pickle\'')
+# @click.option('-f', 'float_precision', default=16, help='浮点数精度，available16 32 64，default 16')
+def main(train_size, test_size, dataset_pickle_filepath, output_pickle_filepath):
+    run(train_size, test_size, dataset_pickle_filepath, output_pickle_filepath)
 
 
 if __name__ == '__main__':

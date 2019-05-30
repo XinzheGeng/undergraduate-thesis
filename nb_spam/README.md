@@ -68,3 +68,8 @@ docker build [镜像名称]:[版本号] .
 ```shell
 docker run -p 8080:8080 [镜像名称]:[版本号]
 ```
+
+
+### 测试方法
+运行 `preprocess.py`，删除dataset.pickle，开启过滤停用词，切分原数数据集，然后运行`test.py`测试。
+运行 `preprocess.py`，删除dataset.pickle，关闭过滤停用词，切分原数数据集，然后运行`test.py`测试。

@@ -1,3 +1,7 @@
+"""
+web.py
+分类模块，Web 后端
+"""
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from imageio import imread
@@ -117,7 +121,7 @@ def identify_mail():
     vector = words2vector(model.word_set, words, model.word_dict)
     vectors = numpy.zeros((1, vector.shape[0]), dtype=numpy.uint8)
     vectors[0] = vector
-    results, probabilities = predictNB(vectors, model.Pspam, model.Pham, model.PS, model.PH, show_progress_bar=False)
+    results, probabilities = predict_nb(vectors, model.Pspam, model.Pham, model.PS, model.PH, show_progress_bar=False)
     pspam, pham = probabilities[0]
     ret_data = {'type': 'spam' if results[0] == 1 else 'ham', "pspam": pspam, "pham": pham}
     if len(set(words)) < 20:
