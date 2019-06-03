@@ -14,10 +14,11 @@
 \usepackage{listings}
 \usepackage{pythonhighlight}
 \usepackage{pgfplots}               % 使用pgfplots绘图工具包
-\pgfplotsset{width=7cm,compat=1.13} % 图片绘制的宽度是7cm,使用的pgfplots版本为1.13
+\usepackage{amsmath}
+\pgfplotsset{width=12cm,compat=1.13} % 图片绘制的宽度是7cm,使用的pgfplots版本为1.13
 \pagestyle{fancy}
 % 设计（论文）除封皮外，各页均应加页眉，单线上居中打印页眉文字，页眉文字均为宋体五号“长春理工大学本科毕业设计”或“长春理工大学本科毕业论文”。
-\chead{\songti\zihao{5}长春理工大学本科毕业论文}
+\chead{\songti\zihao{5}长春理工大学本科毕业设计}
 \lhead{}
 \rhead{}
 % 设计（论文）页码：宋体，小五，页面底端居中
@@ -27,6 +28,11 @@
 \author{150521310 何程斌}
 \date{}
 \renewcommand{\abstractname}{}
+\renewcommand{\theequation}{\arabic{section}-\arabic{equation}}
+\renewcommand{\thetable}{\arabic{section}-\arabic{table}}
+\renewcommand{\thefigure}{\arabic{section}-\arabic{figure}}
+\renewcommand\labelenumi{(\theenumi)}
+\newcommand{\upcite}[1]{\textsuperscript{\cite{#1}}}
 \ctexset{
   % 各章一级标题序号及标题：宋体三号加粗居中
   % 目录标题貌似也是 section 标题格式控制
@@ -60,8 +66,9 @@
 
   % 摘要正文选用模板中样式所定义的“正文”，段落首行缩进2个字符，宋体，小四；多倍行距1.25，段前、段后均为0行，取消网格对齐。
   \linespread{1.25}\songti\zihao{-4}
-   近些年随着互联网的快速发展，电子邮件得到了广泛的使用，但同时也带来了垃圾邮件问题。本文提出了一种基于朴素贝叶斯算法的垃圾邮件过滤技术，进行了过滤算法的设计与实现。并分析了数据集大小、训练集大小、禁用词表对过滤算法性能的影响，最后通过仿真实验证明该垃圾邮件过滤算法的有效性。
+   近些年随着互联网的快速发展，电子邮件得到了广泛的使用，但垃圾邮件问题也日益突出。首先介绍了垃圾邮件过滤的课题背景和国内外研究现状，然后介绍了朴素贝叶斯算法，接着提出了一种基于朴素贝叶斯算法的垃圾邮件过滤算法，使用伯努利模型计算方法对过滤算法进行了流程设计与代码实现。在trec06数据集上运行了测试，采用交叉验证方法计算出算法性能评估指标，分析了训练集大小、禁用词表对过滤算法性能的影响，最后证明该垃圾邮件过滤算法的有效性。
    \\
+   
 
   % 关键词与摘要之间空一行。中文关键词之间用2个空格间隔，黑体小四顶格书写。
   {\noindent\heiti\zihao{-4}\textbf{关键字：}朴素贝叶斯；反垃圾邮件；邮件分类}
@@ -75,7 +82,7 @@
 
   % Abstract正文设置：段落首行缩进2字；Times New Roman，小四；多倍行距1.25，段前、段后均为0行，取消网格对齐。
   \linespread{1.25}\zihao{-4}
-	In recent years, with the rapid development of the Internet, e-mail has been widely used, but it also brings spam problems. This thesis proposes a spam filtering technology based on Naive Bayesian algorithm, and designs and implements the filtering algorithm. The effects of dataset size, training set size and stop words on the performance of filtering algorithm are analyzed. Finally, the effectiveness of the spam filtering algorithm is proved by simulation experiments.
+	In recent years, with the rapid development of the Internet, e-mail has been widely used, but the problem of spam has become increasingly serious. Firstly, the background of spam filtering and the research status are introduced. Then, the naive Bayes algorithm is introduced. Then a spam filtering algorithm based on naive Bayes algorithm is proposed, which is filtered by Bernoulli model. Then the process design and the code implementation are introduced. The test was run on the trec06 dataset. The cross-validation method was used to calculate the performance evaluation index. The effect brought by size of the training set and the stopwords on the performance of the filtering algorithm were analyzed. Finally, the effectiveness of the spam filtering algorithm was proved.
 	\\
 
   % Key words与Abstract正文之间空一行。Key words之间用分号间隔，Times New Roman，小四，顶格书写。
@@ -91,28 +98,26 @@
 \songti\zihao{-4}
 % 正文以后的页码用阿拉伯数字（1、2、3……）编排页码
 \pagenumbering{arabic}
+\newpage
 \section{绪论}
 \subsection{本课题研究的目的及意义}
-随着互联网的快速发展，电子邮件逐渐成为人们生活中不可或缺的通讯工具。但是，电子邮件在给人们带来便利的同时，也带来了不少问题，其中最严重的问题莫过于泛滥的垃圾邮件。据Securelist（卡巴斯基实验室旗下的IT安全信息资源网站）于2017年第三季度发布的全球垃圾邮件数据显示，2017年第三季度，垃圾邮件占全球电子邮件的58.02\%，9月垃圾邮件占比最高（59.56\%）。中国是垃圾邮件的最大来可以自动检测tex文件的编码，提示是否按照对应编码方式打开。这对一些初级用户使用非utf-8格式的编码提供了方便。
-源（12.24\%），前一个季度的最大来源越南的份额则下降1.2个百分点（11.17\%），排在第二位。美国排在第三位（9.62\%），印度位居第四（8.49\%）。垃圾邮件占据了网络中巨大的带宽资资源，对用户的日常工作生活带了了极大的困扰。并且，不少垃圾邮件还附带着恶意附件和网络钓鱼链接，给用户的计算机、甚至个人财产带来了威胁。
+随着互联网的飞速发展，电子邮件逐渐成为人们生活十分重要的通信工具。但是，在给人们的生活带来便利的同时，电子邮件也带来了不少问题，其中最严重的问题莫过于泛滥的垃圾邮件。据Securelist（卡巴斯基实验室旗下的IT安全信息资源网站）于2017年第三季度发布的全球垃圾邮件数据显示，2017年第三季度，全球的电子邮件中有58.02\%是垃圾邮件，9月份垃圾邮件占比最高，为59.56\%;中国是垃圾邮件的最大发信国，为12.24\%，越南排在第二位（11.17\%），美国排在第三位（9.62\%），印度位居第四（8.49\%）\upcite{securelist}。垃圾邮件占据了网络中巨大的带宽资资源，对用户的日常工作生活带了了极大的困扰。并且，不少垃圾邮件还附带着病毒软件和诈骗链接，给用户的计算机、甚至个人财产带来了威胁。
 
-朴素贝叶斯分类器是一系列以假设特征之间强（朴素）独立下运用贝叶斯定理为基础的简单概率分类器，自20世纪50年代已广泛研究。在20世纪60年代初就以另外一个名称引入到文本信息检索界中，并仍然是文本分类的一种热门（基准）方法，在垃圾邮件识别领域中已有了非常成熟的应用。
+朴素贝叶斯分类器是在特征之间相关性较弱的前提下以贝叶斯定理为基础的简单分类算法，自20世纪50年代已广泛研究。在20世纪60年代初就以另外一个名称引入到文本信息检索界中，是文本分类的一种热门（基准）方法，在垃圾邮件识别领域中已有了非常成熟的应用。
 
 本文基于朴素贝叶斯算法实现了一个垃圾邮件过滤器，对收集到的大量合法邮件和垃圾邮件作为样本进行有指导的学习，提取邮件的主题与正文，建立一个有效的特征词库，从而对垃圾邮件进行高准确率的识别。
 
 \subsection{国内外研究现状}
 
-将一篇英文文本转换成单词集合是十分容易且精确的，因为英文单词之间存在空格和标点符号等天然分割符号。而中文博大精深，远比英文复杂，一个字可能包含了很多种意思，甚至有贬有褒，是不具备独立而又有效的语义的。因此，相比起来在垃圾邮件分类领域国外比国内发展的迅速得多。
-
-将英文文本转换为单词集合非常简单和精确，因为在英语单词之间有自然的分割符号，如空格和标点符号。中文是博大精深的，比英语更复杂，一句话可能包含很多含义，它没有独立有效的语义，在不同语境下同一句话甚至能够体现了不同的语义。因此，与国内垃圾邮件分类的发展相比，国外发展快得多。
+将英文文本转换为单词集合非常简单和精确，因为在英语单词之间存在自然分割符号。相比之下中文比英语要复杂的多，一句话可能包含很多含义，它没有独立有效的语义，在不同语境下同一句话甚至能够体现了不同的语义。因此，与国内垃圾邮件分类的发展相比，国外发展快得多。
 
 总体来讲，目前主要有以下几种垃圾邮件过滤技术。
-\renewcommand\labelenumi{(\theenumi)}
 \begin{enumerate}
-	\item 黑白名单过滤：将经常发送垃圾邮件的域名或者 IP 放入黑名单列表中，当收到新邮件时查询发件人的域名或者IP是否在黑名单列表中。但当对方采用代理IP、伪造地址等手段发送邮件时，该方法就失效了。
-	\item 关键词过滤：创建垃圾邮件的特征关键词表，当收到新邮件时判断此邮件正文中是否存在这些非法关键词。但这种技术需要建立一个庞大的特征关键词表。
-	\item 规则评分过滤：通过对大量邮件的综合分析， 得到一个庞大的规则库。规则库里的每条规则都对应一个分数，计算收到的新邮件获得的分数，总分超过特定的阈值时该邮件就会被判定为垃圾邮件。但因规则数量有限，无法检测匹配规则条数为0的邮件。
-	\item 内容过滤：它可以分为规则角度和内容统计。本文研究的基于朴素贝叶斯算法的滤波方法是基于容统计的过滤方法，准确性较高，并且具有自我学习功能，能够不断地动态调整垃圾邮件集和合法邮件集的概率。
+	\item 黑白名单过滤\upcite{anti-spam}：将经常发送垃圾邮件的域名或者 IP 放入黑名单列表中，当收到新邮件时查询发件人的域名或者IP是否在黑名单列表中，并拒收来自黑名单地址的邮件\upcite{zhangpei}。白名单则相反，代表用户信任的发件人名单，来自白名单发件人的邮件直接视为合法邮件。但如果对方采用代理IP、伪造地址等手段发送邮件时，该方法就失效了。
+	\item 关键词过滤：创建垃圾邮件的特征关键词表，当收到新邮件时判断此邮件正文中是否存在这些非法关键词。但该方法太过粗放，带有非法关键词的正常邮件也会被视为垃圾邮件拦截，并且这种技术需要建立一个庞大的特征关键词表。
+	\item 规则评分过滤：通过对大量邮件的综合分析， 得到一个庞大的规则库。规则库里的每条规则都对应一个分数，计算收到的新邮件获得的分数\upcite{zhangpei}，总分超过特定的阈值时该邮件就会被判定为垃圾邮件。但因规则数量有限，无法检测匹配规则条数为0的邮件。决策树是规则评分过滤技术的代表，最早出现的决策树相关的学习系统是Hunt于1966年研发的;1979 年，Quinlan 提出了迭代分类器 ID3 算法;1983年他又提出了 C4.5 算法\upcite{haibo,wux}，改进了ID3 算法不能处理连续值属性数据的缺点;该算法随着数据的不断增加而加以调整，弥补了 ID3 算法的不足之处\upcite{caocuiling}。这些算法虽然在一定程度上能够 满足需求，但是它们的根本原理都是预设规则比较结果来判定是否为垃圾邮件。同时这些规则 往往都是静态的，缺少自助学习策 略，在规律不明显的应用领域中过滤效果很差。
+	
+	\item 内容过滤：它可以分为规则角度和内容统计。本文研究的基于朴素贝叶斯算法的垃圾邮件过滤算法是基于内容的算法，速度较快、效率较高、耗费较少、准确性较高，并且具有自我学习功能，能够不断地动态调整垃圾邮件集和合法邮件集的概率。在文本分类领域具有十分广泛的应用。垃圾邮件过滤领域中最常用的算法便是朴素贝叶斯算法和支持向量机算法\upcite{yanglei}。马小龙提出了 SVM-EM 朴素贝叶斯算法，该算法先利用SVM 算法将数据集分成完整集和缺失集，计算缺失属性数据项与完整属性数据项的相关度，利用EM 算法对数据不完整属性进行修补处理，最后利用朴素贝叶斯算法分类\upcite{maxiaolong}。
 \end{enumerate}
 
 \subsection{本论文的组织结构}
@@ -120,28 +125,45 @@
 	
 	第一章绪论。概述了朴素贝叶斯算法和垃圾邮件过滤的研究内容，国内外研究现状。提出了本文要研究的内容。
 	
-	第二章朴素贝叶斯。介绍了朴素贝叶斯算法的基本概念，即朴素贝叶斯算法的步骤和方法，为之后的章节奠定坚实的理论基础。
+	第二章朴素贝叶斯算法。介绍了朴素贝叶斯算法的基本概念，即朴素贝叶斯算法的步骤和方法，为之后的章节奠定坚实的理论基础。
 	
-	第三章垃圾邮件过滤算法实现。首先介绍了垃圾邮件的特征等基本概念，然后结合第二章介绍的朴素贝叶斯算法，详细描述了将朴素贝叶斯算法应用于垃圾邮件过滤领域的步骤。
+	第三章垃圾邮件过滤算法实现。首先介绍了垃圾邮件的特征等基本概念，结合第二章介绍的朴素贝叶斯算法，详细描述了将朴素贝叶斯算法应用于垃圾邮件过滤领域的过程。
 	
-	第四章算法改进。介绍了第三章的算法实现的不足，以及改进算法的方法。
+	第四章算法改进。介绍了第三章的算法实现的不足，分析了问题出现的原因，以及提出了改进算法的方法。
 	
-	第五章实验结果。本章是本文的重点，对算法进行对比测试，得到了准确率、精确率、召回率等评估数据，并分析了训练集大小、禁用词表对实验结果的影响，由此验证了基于朴素贝叶斯算法的垃圾邮件过滤算法的可行有效性。
+	第五章系统测试与评估。本章是本文的重点，对算法进行对比测试，得到了准确率、精确率、召回率等评估数据，并分析了训练集大小、禁用词表对实验结果的影响，由此验证了基于朴素贝叶斯算法的垃圾邮件过滤算法的可行有效性。
 
-\section{朴素贝叶斯}
+\newpage
+\section{朴素贝叶斯算法}
+\subsection{朴素贝叶斯算法分析}
 	贝叶斯定理表示根据基于统计数据得到的某些特征来计算未分类的样本被分类为各个类别的概率，比较概率从而实现分类。在介绍贝叶斯定理之前，需要介绍一下条件概率和完全概率公式。
 	
-	条件概率：指在事件$B$发生的前提下，事件$A$发生的概率，即$P(A|B)=\frac{P(A\cap B)}{P(B)}$，由此可得$P(A \cap B)=P(A|B) \cdot P(B)$，同理$P(A \cap B) = P(B|A) \cdot P(A)$，所以$P(A|B) \cdot P(B)=P(B|A|) \cdot P(A)$，由此就得到了条件概率的计算公式$P(A|B)=\frac{P(B|A) \cdot P(A)}{P(B)}$。
+	条件概率：指在事件$B$发生的前提下，事件$A$发生的概率\upcite{bayes}，即$P(A|B)=\frac{P(A\cap B)}{P(B)}$，由此可得$P(A \cap B)=P(A|B) \cdot P(B)$，同理$P(A \cap B) = P(B|A) \cdot P(A)$，所以$P(A|B) \cdot P(B)=P(B|A|) \cdot P(A)$，由此就得到了条件概率的计算公式：
 	
-	全概率公式：假定样本空间$S$，$A_1,A_2,\cdots,A_n$代表$S$的一个划分，即$S=\sum\limits_{i=1}^{n}A_i$，$P(A_i)>0$。$B$ 为$S$的某一事件，在这种情况下，事件$B$可以被分为$n$个部分，即$P(B)=\sum\limits_{i=1}^{n}P(B\cap A_i)$，在先前的推导中我们已知$P(B \cap A)=P(B|A) \cdot P(A)$，相互结合就可得到全概率公式$P(B)=\sum\limits_{i=1}^{n}P(B|A_i) \cdot P(A_i)$。
+	\begin{equation}
+	\label{equ:cond-prob}
+	P(A|B)=\frac{P(B|A) \cdot P(A)}{P(B)}
+	\end{equation}
+	
+	全概率公式\upcite{bayes}：假定样本空间$S$，$A_1,A_2,\cdots,A_n$代表$S$的一个划分，即$S=\sum\limits_{i=1}^{n}A_i$，$P(A_i)>0$。$B$ 为$S$的某一事件，在这种情况下，事件$B$可以被分为$n$个部分，即$P(B)=\sum\limits_{i=1}^{n}P(B\cap A_i)$，在先前的推导中我们已知$P(B \cap A)=P(B|A) \cdot P(A)$，相互结合就可得到全概率公式:
+	\begin{equation}
+	\label{equ:full-prob}
+	P(B)=\sum\limits_{i=1}^{n}P(B|A_i) \cdot P(A_i)
+	\end{equation}
+
 	
 	将全概率公式代入条件概率公式，就得到了贝叶斯公式：
-	
-	$$P(A|B) = \frac{P(B|A) \cdot P(B)}{\sum\limits_{i=1}^{n}P(B|A_i) \cdot P(A_i)}$$
+	\begin{equation}
+	\label{equ:bayes}
+	P(A|B) = \frac{P(B|A) \cdot P(B)}{\sum\limits_{i=1}^{n}P(B|A_i) \cdot P(A_i)}
+	\end{equation}
 	
 	用一个$n$维特征向量$\vec{f}$来表示待分类的样本$d$，其中$f_i(i=1,2,...,n)$表示第$i$个特征，$n$是特征的个数。则该样本$d$分类为$c_j(j=1,2,...,m)$的概率为：
 	
-	$$P(C=c|\vec{F}=\vec{f})=\frac{P(\vec{F}=\vec{f}|C=c)\cdot P(C=c) } {P(\vec{F}=\vec{f})}$$
+	\begin{equation}
+	\label{equ:nb}
+	P(C=c|\vec{F}=\vec{f})=\frac{P(\vec{F}=\vec{f}|C=c)\cdot P(C=c) } {P(\vec{F}=\vec{f})}
+	\end{equation}
 	
 	其中，$P(\vec{F}=\vec{f})=\sum\limits_{j=1}^{m} P(C=c_j) \cdot P(\vec{F}=\vec{f}|C=c_j)$
 	
@@ -149,23 +171,96 @@
 	
 	而朴素贝叶斯则是在贝叶斯定理的基础上，假设所有特征都相互独立，极大了降低了计算难度。与贝叶斯定理相比较，对于特征向量为$\vec{f}=\langle f_1, \ldots, f_n \rangle$的待分类样本$d$，其被分类为$c$分类的概率为：
 	
-	$$P(C=c|\vec{F}=\vec{f})=\frac{P(C=c) \cdot \prod\limits_{i=1}^{n} P(F_i=f_i|C=c)} {P(\vec{F}=\vec{f})}$$
+	\begin{equation}
+	P(C=c|\vec{F}=\vec{f})=\frac{P(C=c) \cdot \prod\limits_{i=1}^{n} P(F_i=f_i|C=c)} {P(\vec{F}=\vec{f})}
+	\end{equation}
 		
 	同时，$P(\vec{F}=\vec{f})=\sum\limits_{j=1}^{m} P(C=c_j) \cdot \prod\limits_{i=1}^{n}  P(F_i=f_i|C=c_j)$
 	
 	由于$P(\vec{F}=\vec{f})$对于任意分类都是相同的，所以可以将公式进一步省略为：
 	
-	$$P(C=c) \cdot \prod\limits_{i=1}^{n} P(F_i=f_i|C=c)$$
+	\begin{equation}
+	P(C=c) \cdot \prod\limits_{i=1}^{n} P(F_i=f_i|C=c)
+	\end{equation}
 	
 	所以，仅需计算所有分类对应的该公式的值，比较大小，即可完成分类，这极大地降低了计算难度。
 	
-	并且研究表明朴素贝叶斯算法在特定领域（如文本分类，满足所有特征属性相关性较小的前提）对分类结果的准确性的影响并不大。
+	最为广泛的两种分类算法是决策树算法和朴素贝叶斯算法。和决策树算法相比，朴素贝叶斯算法源自古典数学理论，拥有坚实的数学基础，以及稳定的分类效率\upcite{nb}。同时，朴素贝叶斯算法所需估计的参数很少，对缺失数据不太敏感，算法也比较简单。理论上，朴素贝叶斯算法与其他分类方法相比具有最小的误差率。但是实际上并非总是如此，这是因为朴素贝叶斯算法假设属性之间相互独立，这个假设在实际应用中往往是不成立的，这给朴素贝叶斯算法的正确分类带来了一定影响。但研究表明朴素贝叶斯算法在特定领域（如文本分类，满足所有特征属性相关性较小的前提）对分类结果的准确性的影响并不大。
+	
+\subsection{朴素贝叶斯的三种常用模型}
+\subsubsection{高斯模型}
+	如果特征 $f_j $是连续变量，可以假设它符合高斯分布(正态分布），即假设每个类别 $c_k$ 下的 $f_{kj}$ 符合高斯分布。这样，我们可以通过高斯分布的概率密度函数来计算样本中 $x_j$ 某个特定值的条件概率 $P(F_j=f_j|C=C_k)$ 。高斯分布的概率密度函数为： 
+	
+	\begin{equation}
+	f(x ; \mu, \sigma)=\frac{1}{\sigma \sqrt{2 \pi}} \exp \left(-\frac{(x-\mu)^{2}}{2 \sigma^{2}}\right)
+	\end{equation}
+	
+	其中 $\mu$ 是均值， $\sigma^2$ 是方差。 假设在类别 $C_k$ 中，特征 $f_j$的均值为 $\mu_{kj}$ ，方差为 $\sigma_{kj}^2$（这两项可以通过样本数据统计出来）。则 
+	
+	\begin{equation}
+	P\left(F_j=f_{j} | C=c_{k}\right)=\frac{1}{\sigma_{k j} \sqrt{2 \pi}} \exp \left(-\frac{\left(f_{j}-\mu_{k j}\right)^{2}}{2 \sigma_{k j}^{2}}\right)
+	\end{equation}
+	
+	处理连续数值问题的另一种常用技术是将连续数值离散化。通常当训练样本数量较少或者是精确的分布已知时，通过概率分布的方法是更好的选择。 而在样本数量较多的情形下离散化的方法表现更优，因为大量的样本可以学习到数据的实际分布。通常情况下分类任务都会提供大量的数据样本，此时选择离散化方法会比概率分布估计的方法更好。
+\subsubsection{多项式模型}
+	如果特征$f_j$是离散值，可以假设它符合多项式分布。可以统计 $f_j $的某个特征在样本中的频率来估算其概率。 假设 特征$ f_j$ 有 $S_j $个可能的取值，并且在n个样本中，类别为 $c_k$ 、特征 $f_j $取值为 s 的样本有 $m_{kjs}$ 个。则
+	\begin{equation}
+		P\left(x_{j} | C_{k}\right)=m_{k j s} / m_{k}
+	\end{equation}
+	
+	对于一段文本的特征向量的的每个分量的值是文本中处于该分量位置的单词在词典中的索引，其取值范围是$\{1,2,\dots,n\}$，$n$是词典的大小，特征向量的长度为文本中单词的数量。
+	
+\subsubsection{伯努利模型}
+如果特征 $f_j$ 是稀疏二项离散值，可以假设它符合 伯努利分布。伯努利分布只有两种可能的取值，我们将其编码为 {0,1}，则
 
+	\begin{equation}
+P\left(x_{j} | C_{k}\right)=\left\{\begin{array}{l}{P\left(x_{j}=1 | C_{k}\right)} \\ {P\left(x_{j}=0 | C_{k}\right)=1-P\left(x_{j}=1 | C_{k}\right)}\end{array}\right.
+	\end{equation}
+
+比如构造一个5000个不同单词的向量作为输入特征$\vec{w}$，对于一段文本，其中有出现的单词，在$\vec{w}$中对应单词的位置设为1，其它位置为0，这样$\vec{w}$中的每个特征（单词）的取值为1或0，符合伯努利分布。
+\subsubsection{本设计采用的模型}
+	本设计使用伯努利模型。用向量$\vec{w}(m \times 1)$表示一个$m$个单词的字典。当邮件中出现字典$\vec{m}$中的第$i$个单词时，将$w_i$置1，否则置0。例如对于一封具$n$个词语的邮件，它的特征向量为：
+	$$
+	\vec{w}=
+	=
+	\begin{bmatrix}
+	w_1\\
+	w_2\\
+	w_3\\
+	\vdots\\
+	w_i\\
+	\vdots\\
+	w_m
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+	1\\
+	0\\
+	1\\
+	\vdots\\
+	0\\
+	\vdots\\
+	1
+	\end{bmatrix}
+	\begin{matrix}
+	\text{今天}\\
+	\text{公司}\\
+	\text{促销}\\
+	\vdots\\
+	\text{欢迎}\\
+	\vdots\\
+	\text{选购}
+	\end{matrix}
+	$$
+	邮件包含“今天”、"促销“、”选购“等词，因此字典中的对应位置置1。字典中未在邮件中出现过的词，则将对应的位置置为0。 而对于邮件中某些词可能并未出现在字典中，我们可以直接忽略这些词。
+	
+
+\newpage
 \section{垃圾邮件过滤算法实现}
 \subsection{系统设计}
 	结合朴素贝叶斯算法的垃圾邮件过滤算法的流程图如图\ref{fig:overall-flowchart}所示：
 	
-	\begin{figure}[ht]
+	\begin{figure}[H]
 		\centering
 		\includegraphics[scale=0.5]{pictures/朴素贝叶斯算法的垃圾邮件过滤算法的流程图.png}
 		\caption{朴素贝叶斯算法的垃圾邮件过滤算法的流程图}
@@ -174,7 +269,7 @@
 
 	按照流程图所示，整个垃圾邮件过滤系统需要两个方面的问题，一是对现有的邮件数据集进行训练，二是对待分类的新邮件进行分类过滤。按此思想设计，得到如图\ref{fig:overall-structure}所示。
 	
-	\begin{figure}[ht]
+	\begin{figure}[H]
 		\centering
 		\setlength{\abovecaptionskip}{0.cm}
 		\setlength{\belowcaptionskip}{-0.cm}
@@ -186,31 +281,32 @@
 	依照此架构，可以将系统分割成三部分实现：
 	
 	第一部分用于对邮件进行预处理，如图\ref{fig:preprocess-system}所示。
-	\begin{figure}[ht]
+	\begin{figure}[H]
 		\centering
 		\setlength{\abovecaptionskip}{0.cm}
 		\setlength{\belowcaptionskip}{-0.cm}
-		\includegraphics[scale=0.5]{pictures/邮件预处理子系统.png}
+		\includegraphics[scale=0.45]{pictures/邮件预处理子系统.png}
 		\caption{邮件预处理子系统}
 		\label{fig:preprocess-system}
 	\end{figure}
 	
 	第二部分用于对过滤器进行训练，如图\ref{fig:train-system}所示。
-	\begin{figure}[ht]
+	\begin{figure}[H]
 		\centering
 		\setlength{\abovecaptionskip}{0.cm}
 		\setlength{\belowcaptionskip}{-0.cm}
-		\includegraphics[scale=0.5]{pictures/邮件训练子系统.png}
+		\includegraphics[scale=0.45]{pictures/邮件训练子系统.png}
 		\caption{过滤器训练子系统}
 		\label{fig:train-system}
 	\end{figure}
 		
 	第三部分用于对待分类邮件进行分类过滤，如图\ref{fig:predict-system}所示。
-	\begin{figure}[!ht]
+	\begin{figure}[H]
 		\centering
+		
 		\setlength{\abovecaptionskip}{0.cm}
 		\setlength{\belowcaptionskip}{-0.cm}	
-		\includegraphics[scale=0.5]{pictures/邮件分类子系统.png}
+		\includegraphics[scale=0.45]{pictures/邮件分类子系统.png}
 		\caption{邮件分类子系统}
 		\label{fig:predict-system}
 	\end{figure}
@@ -221,10 +317,10 @@
 
 	根据多用途互联网邮件扩展（MIME）标准，对邮件格式进行解析，提取正文，对内容进行分词、过滤停用词后，依照邮件类别以纯文本文件的格式分类存储。
 		
-	本设计使用的中文分词工具包为北京大学于 2019 年 2 月开源的 pkuseg。相较于业界其他成熟的工具包，如 jieba、THULAC 等，pkuseg 在特定的数据集上拥有更高的粉刺准确率。根据北大研究组的测试结果， pkuseg 分别在示例数据集（MSRA 和 CTB8）上
+	本设计使用的中文分词工具包为北京大学于 2019 年 2 月开源的 pkuseg\upcite{pkuseg}。相较于业界其他成熟的工具包，如 jieba、THULAC 等，pkuseg 在特定的数据集上拥有更高的粉刺准确率。根据北大研究组的测试结果， pkuseg 分别在示例数据集（MSRA 和 CTB8）上
 降低了 79.33\% 和 63.67\% 的分词错误率。
 	
-	停用词指在自然语言处理中，为节省存储空间、提高处理效率，会过滤掉某些低价值的字或词，如“这”、“那”、“一个”，这些字或词即被称为停用词（Stop Words）。本设计使用的停用词表为哈工大停用词表、百度停用词表和四川大学机器智能实验室停用词库的并集，包含了2313个停用词。
+	停用词指在自然语言处理中，为节省存储空间、提高处理效率，会过滤掉某些低价值的字或词，如“这”、“那”、“一个”，这些字或词即被称为停用词（Stop Words）\upcite{stopwords}。本设计使用的停用词表为哈工大停用词表、百度停用词表和四川大学机器智能实验室停用词库的并集，包含了2313个停用词。
 \subsection{训练算法}
 	首先，读取预处理分词完毕后的数据集，随机打乱，并取其中40000条为训练集，20000条为测试集。将训练集中所有的词语做并集得到一个词集。当使用全部40000条训练样本时，得到的词集长度约为140000左右（本章余下全部数据都是在使用了全部40000条测试样本的前提下得到的）。
 	
@@ -242,6 +338,7 @@
 	
 	最后，将分类后的邮件归入到数据集中，当分类的邮件数量达到了某一阈值时（如100），可以将分类后的邮件加入训练集重新训练模型。
 
+\newpage
 \section{算法改进}
 	上一章节描述的过滤算法仍然有一些不足之处，如占用内存过大等问题，本章节将解释这些问题出现的原因，和解决的方法。
 \subsection{稀疏矩阵}
@@ -253,13 +350,16 @@
 \subsection{拉普拉斯平滑}
 	在上文的用例中，我们得到了一个大小为140000的词集。然而，在这140000个词语中，并不是所有词都在垃圾邮件或合法邮件中出现过。在上文的用例中，“爱屋及乌”、“强行”等词从未在垃圾邮件中出现过，而“买家量”、“企业链”等词则从未在合法邮件中出现过。这导致对于这些词语，$ps_i=P(W=w_i|C=c_{spam})$或$ph_i=P(W=w_i|C=c_{ham})$的计算结果为0，使得具有该词语的邮件属于垃圾邮件的概率$P(C=c_{spam}) \cdot \prod\limits_{i=1}^{n} P(W=w_i|C=c_{spam})$，或合法邮件的概率$P(C=c_{ham}) \cdot \prod\limits_{i=1}^{n} P(W=w_i|C=c_{ham})$计算为0，从而导致无法对该邮件进行分类。
 	
-	为了解决零概率的问题，法国数学家拉普拉斯最早提出用加1的方法估计没有出现过的现象的概率，该方法被叫做拉普拉斯平滑。可以在计算概率矩阵$\vec{ps}$和$\vec{ph}$，统计词语在垃圾/合法邮件中出现的次数时，将初值设置为1，即假定所有词语都在垃圾/合法邮件中至少出现过一次，当然，在计算概率时，分母也要加上$n$，即词集的长度。研究表明，在训练样本很大时，每个分量x的计数加1造成的估计概率变化可以忽略不计，同时也可以方便有效的避免零概率问题。
+	为了解决零概率的问题，法国数学家拉普拉斯最早提出用加1的方法估计没有出现过的现象的概率，该方法被叫做拉普拉斯平滑\upcite{nb-enhance}。可以在计算概率矩阵$\vec{ps}$和$\vec{ph}$，统计词语在垃圾/合法邮件中出现的次数时，将初值设置为1，即假定所有词语都在垃圾/合法邮件中至少出现过一次，当然，在计算概率时，分母也要加上$n$，即词集的长度。研究表明，在训练样本很大时，每个分量x的计数加1造成的估计概率变化可以忽略不计，同时也可以方便有效的避免零概率问题。
 \subsection{小数向下溢出}
 	大多数词语的出现次数不不多，所以词语的垃圾邮件概率$ps_i$和合法邮件概率$ph_i$往往是一个十分小的小数。而上文中我们使用的计算邮件为垃圾/合法邮件概率的公式中使用了连乘，而连乘算式中的因子都是十分小的小数，导致公式得到的结果往往是一个非常小的小数，小数点后的位数能达到几十甚至几百。而我们知道计算机中浮点数往往有具体的精度，过小的小数会导致算数下溢，从而导致公式的计算结果不正确。
 	
 	根据朴素贝斯算法是比较各个分类概率的大小来决定最终分类的特性，所以，只要确保分类概率之间的大小关系不被改变，我们可以对公式进行一些变形。最简单的方法就是对公式进行一次$\log$运算，所以，公式$P(C=c) \cdot \prod\limits_{i=1}^{n} P(W=w_i|C=c_)$变形为$\log P(C=c) + \sum\limits_{i=1}^{n}\log P(W=w_i|C=c)$，从而解决了小数向下溢出的问题，同时也没有改变最终得到的各个分类的概率之间的大小关系。
 
-\section{实验结果}
+\newpage
+\section{系统测试与评估}
+
+\subsection{测试环境}
 	本次实验的环境如表\ref{tab:env}所示：
 	\begin{table}[!htpb]
 		\centering
@@ -280,9 +380,10 @@
 		\end{tabular}
 	\end{table}
 
-	下文将控制实验变量：训练集大小，是否使用禁用词表，来计算出准确率（Accuracy）、精确率（Precision）和召回率（Recall），以衡量算法性能。
+\subsection{性能评估指标}
+	在正式开始实验测试前，需要先介绍一下衡量算法性能的评估指标：准确率（Accuracy）、精确率（Precision）和召回率（Recall）。
 	
-	以垃圾邮件为正例，我们得到：
+	以垃圾邮件为正例，我们假设：
 	
 	\begin{enumerate}
 		\item 真正例 (TP)：垃圾邮件被分类为垃圾邮件的数量
@@ -292,10 +393,11 @@
 	\end{enumerate}
 
 	准确率代表分类后的邮件中被正确分类的邮件所占的百分比，为$Accuracy=\frac{TP+TN}{TP+FP+TN+FN}$。精确率代表被分类为垃圾邮件的邮件中正确分类的邮件所占的百分比，为$Precision=\frac{TP}{TP+FP}$。召回率指实际垃圾邮件中被正确分类的邮件所占的百分比，为$Recall=\frac{TP}{TP+FN}$。
+
+\subsection{实验结果}	
+	本文采取交叉验证的方法，从数据集中取出小部分在分类阶段测试使用，剩下的大部分作为训练阶段的训练样本集，用来测试分类器的精确性。本文依次采用10、50、100、500、1000、5000、10000、20000、40000封训练样本，统一采用20000封测试样本。同时，还以是否开启停用词过滤为变量进行了两次实验，以验证停用词对算法性能的影响。每组控制变量下运行多次测试（本文采用了十次），取准确率、精确率、召回率的平均值作为最终结果，以减轻偶然的误差对实验结果的影响。实验结果如表\ref{tab:stopwords-on-performance}和表\ref{tab:stopwords-off-performance}所示。
 	
-	在测试中，采用了两个变量：训练集大小和是否启用停用词过滤，以比较不同情况下算法的性能。每组变量下运行十次测试，并取结果准确率、精确率、召回率的平均值，以避免偶然的误差问题。实验结果如表\ref{tab:stopwords-on-performance}和表\ref{tab:stopwords-off-performance}所示。
-	
-	\begin{table}[!htpb]
+	\begin{table}[H]
 		\centering
 		\zihao{5}
 		\caption{开启停用词过滤时不同训练集大小的算法性能}
@@ -325,7 +427,7 @@
 		\end{tabular}
 	\end{table}
 
-	\begin{table}[!htpb]
+	\begin{table}[H]
 		\centering
 		\zihao{5}
 		\caption{关闭停用词过滤时不同训练集大小的算法性能}
@@ -355,12 +457,12 @@
 		\end{tabular}
 	\end{table}
 
-	将表\ref{tab:stopwords-on-performance}和表\ref{tab:stopwords-off-performance}的数据转换为折线图，可以更直观的看出数据之间的关系。
+	将表\ref{tab:stopwords-on-performance}和表\ref{tab:stopwords-off-performance}的数据转换为折线图的形式，可以更直观地分析数据之间的关系。
 	
 	\begin{figure}[H]
 		\centering
 		\begin{tikzpicture}
-		\begin{axis}[legend pos=outer north east, xlabel=训练集大小, ylabel=准确率平均值] 
+		\begin{axis}[legend pos=south east, xlabel=训练集大小（封）, ylabel=准确率平均值] 
 		\addplot+[smooth]                    % 设置绘图的类型是光滑线图
 		coordinates
 		{
@@ -374,7 +476,7 @@
 			(10, 0.869190) (50,0.938640) (100,0.941490)
 			(500,0.947824) (1000,0.946430) (5000, 0.954619)
 			(10000,0.954750)(20000,0.957215)(40000,0.960180)
-		};
+		};ref6
 		\addlegendentry{开启停用词过滤-准确率平均值}
 		\addlegendentry{关闭停用词过滤-准确率平均值}
 		\end{axis}
@@ -385,7 +487,7 @@
 	\begin{figure}[H]
 	\centering
 	\begin{tikzpicture}
-	\begin{axis}[legend pos=outer north east, xlabel=训练集大小, ylabel=精确率平均值] 
+	\begin{axis}[legend pos=south east, xlabel=训练集大小（封）, ylabel=精确率平均值] 
 	\addplot+[smooth]                    % 设置绘图的类型是光滑线图
 	coordinates
 	{
@@ -410,7 +512,7 @@
 	\begin{figure}[H]
 	\centering
 	\begin{tikzpicture}
-	\begin{axis}[legend pos=outer north east, xlabel=训练集大小, ylabel=准确率平均值] 
+	\begin{axis}[legend pos=south east, xlabel=训练集大小（封）, ylabel=准确率平均值] 
 	\addplot+[smooth]                    % 设置绘图的类型是光滑线图
 	coordinates
 	{
@@ -436,37 +538,41 @@
 	
 	并且，比较开启停用词过滤和关闭停用词过滤之间的数值差别，我们可以发现，两者最终的准确率平均值、精确率平均值和召回率平均值都稳定在一个十分优秀的数值，但前者的数值往往总是大于后者的数值。同时结合表\ref{tab:stopwords-on-performance}和表\ref{tab:stopwords-off-performance}我们可以发现，关闭停用词过滤后的词集大小往往要大于开启停用词过滤后的词集大小，这会给系统带来些许时空上的开销。所以，停用词过滤是十分值得开启的。
 	
-	当开启了停用词过滤，训练集大小为 40000 时，准确率、精准率、召回率三者的平均值都到达了最高点，它们的值分别为 $0.971235$、$0.978030$和$0.977662$，可见该垃圾邮件过滤系统是十分有效的。
+	当开启了停用词过滤，训练集大小为 40000 时，准确率、精准率、召回率三者的平均值都到达了最高点，它们的值分别为 $0.971235$、$0.978030$和$0.977662$，可见该垃圾邮件过滤系统是十分有效的。$0.971235$的准确率代表在20000封测试邮件中有575封被错误分类（包括垃圾邮件被分类为合法邮件、合法邮件被分类为垃圾邮件），$0.978030$的精确率代表在被分类为垃圾邮件的样本中有$2.197\%$其实是合法邮件，而$0.977662$的召回率代表有$2.233\%$的垃圾邮件被分类为合法邮件。由此可见本文的邮件过滤系统有较高的准确率 、精确率和召回率 ，性能稳定，过滤效果较好，证明了算法的有效性。
 
+\newpage
 \section*{总结}
 \addcontentsline{toc}{section}{总结}
-	本文基于朴素贝叶斯算法设计并实现了一种垃圾邮件过滤算法。实验证明该垃圾邮件过滤系统对中文垃圾邮件有着良好的过滤效果，可以泛应用在未来的垃圾邮件过滤系统中。并且，下一步还可以考虑结合多种过滤方法，从而进一步的提高过滤效果。
-
+	本文基于朴素贝叶斯算法设计并实现了一种垃圾邮件过滤算法。并根据分类结果的准确率、精确率和召回率评估该算法，经过大量实验证明该垃圾邮件过滤系统对中文垃圾邮件有着良好的过滤效果，可以在一定程度上提高垃圾邮件过滤的分类准确率
+，可以泛应用在未来的垃圾邮件过滤系统中。该算法主要适用于属性向量之间的混叠性比较高的数据集，如果数据集之间的混叠性比较弱，就无法体现该算法的优势。
+	
+	同时，本设计仍然存在不足之处。例如没有考虑合法邮件被分类垃圾邮件给用户造成的损失要远远大于垃圾邮件被分类为合法邮件这一问题，也没考虑到错误分类的邮件加入数据集造成的脏数据问题。为了使邮件过滤系统更加人性化，还需要做出进一步的努力。下一步还可以考虑结合多种过滤方法，从而进一步的提高过滤效果。
+	
+\newpage
 \begin{thebibliography}{99}
   \addcontentsline{toc}{section}{参考文献}
   % 参考文献正文字体：宋体五号，多倍行距1.25，段前、段后均为0行。
   \linespread{1.25}\songti\zihao{5}
- \bibitem{ref1}Russell, Stuart; Norvig, Peter. Artificial Intelligence: A Modern Approach 2nd. Prentice Hall. 2003 [1995]. ISBN 978-0137903955.
- \bibitem{ref2}杨雷,曹翠玲,孙建国,张立国.改进的朴素贝叶斯算法在垃圾邮件过滤中的研究[J].通信学报,2017,38(04):140-148.
- \bibitem{ref3}张培,纪鸿旭,李璐.基于朴素贝叶斯的中文垃圾邮件过滤[J].信息与电脑(理论版),2017(07):79-81.
- \bibitem{ref4}马哲. 垃圾邮件过滤系统的研究与实现[D]. 浙江大学, 2005.
- \bibitem{pkuseg}Xu Sun, Houfeng Wang, Wenjie Li. Fast Online Training with Frequency-Adaptive Learning Rates for Chinese Word Segmentation and New Word Detection. Proceedings of ACL. 253–262. 2012
- \bibitem{nlp}李航．统计学习方法．北京：清华大学出版社，2012
- \bibitem{lihang}成庆 ．统计自然语言处理（第2版）．北京：清华大学出版社，2013
- \bibitem{stopwords}化柏林	. 知识抽取中的停用词处理技术[J]. 现代图书情报技术, 2007, 2(8): 48-51.	
- \bibitem{conmat}confusion matrix  ．wikipedia．2019-02-04
- \bibitem{ref5}徐梦龙,黄家旺.朴素贝叶斯算法在垃圾邮件过滤方面的应用[J].网络安全技术与应用,2018(07):46-47.
- \bibitem{ref6}曹翠玲,王媛媛,袁野,赵国冬.用于垃圾邮件的贝叶斯过滤算法研究[J].网络与信息安全学报,2017,3(03):64-70.
- \bibitem{ref7}刘秋阳,林泽锋,栾青青.基于朴素贝叶斯算法的垃圾短信智能识别系统[J].电脑知识与技术,2016,12(12):190-192.
- \bibitem{ref8}张东亮,董礼.基于改进的朴素贝叶斯算法在垃圾短信过滤中的研究[J].计算机测量与控制,2012,20(02):526-528+551.
- \bibitem{ref9}周修考.基于朴素贝叶斯算法的中文垃圾邮件过滤器的设计与应用[J].兰州工业高等专科学校学报,2010,17(06):5-7.
- \bibitem{ref10}郑炜,沈文,张英鹏.基于改进朴素贝叶斯算法的垃圾邮件过滤器的研究[J].西北工业大学学报,2010,28(04):622-627.
- \bibitem{ref11}翟军昌.基于朴素贝叶斯算法的个性化垃圾邮件过滤[J].长春师范学院学报(自然科学版),2009,28(04):17-20.
- \bibitem{ref12}杨杉,何跃,颜锦江.基于贝叶斯的反垃圾邮件技术探讨[J].网络安全技术与应用,2007(08):54-56.
- \bibitem{ref13}刘宏伟,黄静.基于朴素贝叶斯算法的垃圾邮件网关[J].微计算机信息,2006(18):73-75+69.
- \bibitem{ref14}AFZAL H, MEHMOOD K. Spam filtering of bi-lingual tweets using machine learning[C]//The 18th International Conference on Advanced Communication Technology. 2016: 710- 714.
+  \bibitem{securelist}Darya Gudkova, Maria Vergelis, Tatyana Shcherbakova, Nadezhda Demidova.Spam and phishing in 2017
+  \bibitem{anti-spam}王亚军.反垃圾邮件技术分析[J].福建电脑,2016,32(07):97-98.
+  [EB/OL].https://securelist.com/spam-and-phishing-in-2017/83833/, 2018-02-15.
+   \bibitem{zhangpei}张培,纪鸿旭,李璐.基于朴素贝叶斯的中文垃圾邮件过滤[J].信息与电脑(理论版),2017(07):79-81.
+   \bibitem{haibo}HAIBO H,GARCIA E A. Learning form imbalanced data[J]. IEEE Transactions on Knowledge and Data Engineering, 2009, 21(9):
+1263-1284.
+   \bibitem{wux}WU X, KUMAR V, ROSS QUINLAN J, et al. Top 10 algorithms in
+data mining[J]. Knowledge and Information Systems, 2008, 14(1): 1-37.
+    \bibitem{caocuiling}曹翠玲,王媛媛,袁野,赵国冬.用于垃圾邮件的贝叶斯过滤算法研究[J].网络与信息安全学报,2017,3(03):64-70.
+   \bibitem{yanglei}杨雷,曹翠玲,孙建国,张立国.改进的朴素贝叶斯算法在垃圾邮件过滤中的研究[J].通信学报,2017,38(04):140-148.
+   \bibitem{maxiaolong}马小龙. 一种改进的贝叶斯算法在垃圾邮件过滤中的研究[J].
+计算机应用研究, 2012, 29(3):1091-1094.
+   \bibitem{bayes}张雯捷.贝叶斯定理及其应用浅析[J].课程教育研究,2019(07):132-133.
+   \bibitem{nb}王阳,周云才.朴素贝叶斯分类算法的设计与分析[J].电脑知识与技术,2019,15(11):206-208.
+	\bibitem{pkuseg}Xu Sun, Houfeng Wang, Wenjie Li. Fast Online Training with Frequency-Adaptive Learning Rates for Chinese Word Segmentation and New Word Detection. Proceedings of ACL. 253–262. 2012
+	 \bibitem{stopwords}化柏林	. 知识抽取中的停用词处理技术[J]. 现代图书情报技术, 2007, 2(8): 48-51.	
+	 \bibitem{nb-enhance}漆原,乔宇.针对朴素贝叶斯文本分类方法的改进[J].电子科学技术,2017,04(05):114-116+129.
 \end{thebibliography}
 
+\newpage
 \section*{致谢}
 \addcontentsline{toc}{section}{致谢}
 	通过一阶段的努力，我的毕业设计《基于朴素贝叶斯的垃圾邮件过滤算法》终于完成了，这意味着大学生活即将结束。
@@ -474,6 +580,7 @@
 	
 	感谢我的同窗们，正是有了互相帮助一起学习的日子，才让我的大学多姿多彩。
 
+\newpage
 \appendix
 \section{附录}
 \begin{python}
