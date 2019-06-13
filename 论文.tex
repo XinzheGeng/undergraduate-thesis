@@ -16,6 +16,7 @@
 \usepackage{pgfplots}               % 使用pgfplots绘图工具包
 \usepackage{amsmath}
  \usepackage{textcomp}
+ \usepackage{booktabs} % 三线表
 \pgfplotsset{width=12cm,compat=1.13} % 图片绘制的宽度是7cm,使用的pgfplots版本为1.13
 \pagestyle{fancy}
 % 设计（论文）除封皮外，各页均应加页眉，单线上居中打印页眉文字，页眉文字均为宋体五号“长春理工大学本科毕业设计”或“长春理工大学本科毕业论文”。
@@ -231,7 +232,10 @@
     如果特征 $f_i$ 是稀疏二项离散值，可以假设它符合 伯努利分布。伯努利分布只有两种可能的取值，我们将其编码为 {0,1}，则
 
 	\begin{equation}
-    P(f_i|C=c_j)=\{\begin{array}{l}{P(f_i=1|C=c_j)} \\ {P(f_i=0|C=c_j)=1-P(f_i=1|C=c_j)}\end{array}
+    P(f_i|C=c_j)=\begin{cases}
+    		{P(f_i=1|C=c_j)} \\ 
+    		{P(f_i=0|C=c_j)=1-P(f_i=1|C=c_j)}
+    		\end{cases}
 	\end{equation}
 
     比如构造一个5000个不同单词的向量作为输入特征$\vec{w}$，对于一段文本，其中有出现的单词，在$\vec{w}$中对应单词的位置设为1，其它位置为0，这样$\vec{w}$中的每个特征（单词）的取值为1或0，符合伯努利分布。
@@ -375,7 +379,7 @@
 	
 	最后，将分类后的邮件归入到数据集中，当分类的邮件数量达到了某一阈值时（如100），可以将分类后的邮件加入训练集重新训练模型。
 	
-	本设计还使用Python语言的flask库创建了一个 HTTP RESTful API，用户可以对制定路由“/identify”发送POST请求，POST的body为邮件的内容，最后Response返回系统对该邮件的分类。用户也可以在请求body中添加type参数（spam或ham）时，表明该邮件为垃圾邮件或合法邮件，系统会说依据用户认为的分类而不是系统判定的分类，将该邮件加入数据集中。
+	本设计还使用Python语言的flask库创建了一个 HTTP RESTful API，用户可以对制定路由“/identify”发送POST请求，POST的body为邮件的内容，最后Response返回系统对该邮件的分类。用户也可以在请求body中添加type参数（spam或ham）时，表明该邮件为垃圾邮件或合法邮件，系统会依据用户认为的分类而不是系统判定的分类，将该邮件加入数据集中。
 
 \newpage
 \section{算法改进}
@@ -447,28 +451,20 @@
 		\zihao{5}
 		\caption{开启停用词过滤时不同训练集大小的算法性能}
 		\label{tab:stopwords-on-performance}
-		\begin{tabular}{|c|c|c|c|c|c|}
-			\hline
+		\begin{tabular}{llllll}
+			\toprule
 			训练集大小&词集大小平均值&测试集大小&准确率平均值&精确率平均值&召回率平均值\\
-			\hline
+			\midrule
 			10&908&20000&0.887855&0.885696&0.955441\\
-			\hline
 			50&3306&20000&0.924845&0.933098&0.956466\\
-			\hline
 			100&5178&20000&0.947379&0.945317&0.975438\\
-			\hline
 			500&14965&20000&0.954719&0.955003&0.976015\\
-			\hline
 			1000&23275&20000&0.955300&0.957949&0.974849\\
-			\hline
 			5000&54883&20000&0.952505&0.967649&0.961841\\
-			\hline
 			10000&76204&20000&0.965700&0.971803&0.975324\\
-			\hline
 			20000&104593&20000&0.968320&0.979485&0.976428\\
-			\hline
 			40000&141830&20000&0.971235&0.978030&0.977662\\
-			\hline
+			\bottomrule
 		\end{tabular}
 	\end{table}
 
@@ -477,28 +473,20 @@
 		\zihao{5}
 		\caption{关闭停用词过滤时不同训练集大小的算法性能}
 		\label{tab:stopwords-off-performance}
-		\begin{tabular}{|c|c|c|c|c|c|}
-			\hline
+		\begin{tabular}{llllll}
+			\toprule
 			训练集大小&词集大小平均值&测试集大小&准确率平均值&精确率平均值&召回率平均值\\
-			\hline
+			\midrule
 			10&1054&20000&0.869190&0.900778&0.915103\\
-			\hline
 			50&3701&20000&0.938640&0.947740&0.958458\\
-			\hline
 			100&6043&20000&0.941490&0.954756&0.955379\\
-			\hline
 			500&15460&20000&0.947824&0.960926&0.958371\\
-			\hline
 			1000&23826&20000&0.946430&0.966173&0.955392\\
-			\hline
 			5000&54093&20000&0.954619&0.967474&0.962501\\
-			\hline
 			10000&76413&20000&0.954750&0.968983&0.961193\\
-			\hline
 			20000&105827&20000&0.957215&0.970641&0.963235\\
-			\hline
 			40000&142781&20000&0.960180&0.972995&0.965485\\
-			\hline
+			\bottomrule
 		\end{tabular}
 	\end{table}
 
@@ -507,6 +495,7 @@
 	\begin{figure}[H]
 		\centering
 		\begin{tikzpicture}
+		\zihao{5}
 		\begin{axis}[legend pos=south east, xlabel=训练集大小（封）, ylabel=准确率平均值] 
 		\addplot+[smooth]                    % 设置绘图的类型是光滑线图
 		coordinates
@@ -532,6 +521,7 @@
 	\begin{figure}[H]
 	\centering
 	\begin{tikzpicture}
+	\zihao{5}
 	\begin{axis}[legend pos=south east, xlabel=训练集大小（封）, ylabel=精确率平均值] 
 	\addplot+[smooth]                    % 设置绘图的类型是光滑线图
 	coordinates
@@ -557,6 +547,7 @@
 	\begin{figure}[H]
 	\centering
 	\begin{tikzpicture}
+	\zihao{5}
 	\begin{axis}[legend pos=south east, xlabel=训练集大小（封）, ylabel=准确率平均值] 
 	\addplot+[smooth]                    % 设置绘图的类型是光滑线图
 	coordinates
